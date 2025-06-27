@@ -1,0 +1,100 @@
+---
+title: "List API Keys"
+api: "GET /api-keys"
+description: "List all API keys for the authenticated user"
+---
+
+Retrieves a list of all API keys associated with the authenticated user account.
+
+<RequestExample>
+
+```bash cURL
+curl -X GET 'https://api.memsync.ai/api-keys' \
+  -H 'Authorization: Bearer YOUR_JWT_TOKEN'
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    "https://api.memsync.ai/api-keys",
+    headers={"Authorization": "Bearer YOUR_JWT_TOKEN"}
+)
+api_keys = response.json()
+```
+
+</RequestExample>
+
+## Query Parameters
+
+<ParamField query="status" type="string">
+  Filter by status: `active`, `expired`, `revoked`
+</ParamField>
+
+<ParamField query="limit" type="number" default="50">
+  Maximum number of API keys to return
+</ParamField>
+
+<ParamField query="offset" type="number" default="0">
+  Number of API keys to skip
+</ParamField>
+
+## Response
+
+<ResponseField name="api_keys" type="array">
+  List of API keys
+  
+  <Expandable title="API Key Properties">
+    <ResponseField name="api_key_id" type="string">
+      Unique identifier for the API key
+    </ResponseField>
+    <ResponseField name="name" type="string">
+      Name of the API key
+    </ResponseField>
+    <ResponseField name="scopes" type="array">
+      Granted permission scopes
+    </ResponseField>
+    <ResponseField name="status" type="string">
+      Current status of the API key
+    </ResponseField>
+    <ResponseField name="last_used" type="string">
+      When the API key was last used
+    </ResponseField>
+    <ResponseField name="created_at" type="string">
+      When the API key was created
+    </ResponseField>
+    <ResponseField name="expires_at" type="string">
+      When the API key expires
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="total" type="number">
+  Total number of API keys
+</ResponseField>
+
+<ResponseField name="has_more" type="boolean">
+  Whether there are more API keys to fetch
+</ResponseField>
+
+<ResponseExample>
+
+```json Response
+{
+  "api_keys": [
+    {
+      "api_key_id": "key_123abc",
+      "name": "Production API Key",
+      "scopes": ["memories:read", "memories:write", "profile:read"],
+      "status": "active",
+      "last_used": "2024-01-15T15:30:00Z",
+      "created_at": "2024-01-15T16:30:00Z",
+      "expires_at": "2024-02-14T16:30:00Z"
+    }
+  ],
+  "total": 1,
+  "has_more": false
+}
+```
+
+</ResponseExample> 

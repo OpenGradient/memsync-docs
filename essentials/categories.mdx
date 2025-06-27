@@ -1,0 +1,463 @@
+---
+title: 'Memory Categories'
+description: 'How MemSync organizes memories into meaningful categories'
+---
+
+# Memory Categories
+
+MemSync automatically organizes memories into meaningful categories, making it easier to find relevant context and build comprehensive user profiles. Understanding these categories helps you optimize memory retrieval and user personalization.
+
+## Available Categories
+
+MemSync uses 10 predefined categories that cover the most important aspects of user information:
+
+<CardGroup cols={2}>
+  <Card title="Identity" icon="id-card">
+    Personal information including name, age, background, location, and origin
+  </Card>
+  
+  <Card title="Career" icon="briefcase">
+    Work history, profession, studies, and professional goals
+  </Card>
+  
+  <Card title="Interests" icon="star">
+    Hobbies, passions, interests, and recreational activities
+  </Card>
+  
+  <Card title="Relationships" icon="users">
+    Family, friends, social connections, and relationship patterns
+  </Card>
+  
+  <Card title="Health" icon="heart-pulse">
+    Medical history, fitness goals, wellness information, and health behaviors
+  </Card>
+  
+  <Card title="Finance" icon="dollar-sign">
+    Budget, investments, financial goals, income, and financial background
+  </Card>
+  
+  <Card title="Learning" icon="graduation-cap">
+    Educational background, skills, courses, and knowledge goals
+  </Card>
+  
+  <Card title="Travel" icon="plane">
+    Past trips, future travel plans, favorite destinations, and travel history
+  </Card>
+  
+  <Card title="Productivity" icon="list-check">
+    Tasks, projects, time management, and organizational systems
+  </Card>
+  
+  <Card title="Private" icon="lock">
+    Sensitive or confidential personal information
+  </Card>
+</CardGroup>
+
+## Category Details
+
+### Identity
+Captures who the user is at their core - their fundamental personal information and background.
+
+**Examples:**
+- "Lives in New York City, originally from California"
+- "29 years old, married with two children"
+- "Identifies as a creative problem-solver and lifelong learner"
+
+```json
+{
+  "memory": "Lives in San Francisco, originally from Chicago",
+  "categories": ["identity"],
+  "type": "semantic"
+}
+```
+
+### Career
+Professional life, work experience, and career-related information.
+
+**Examples:**
+- "Works as a Senior Data Scientist at Microsoft"
+- "Has 8 years of experience in machine learning"
+- "Currently pursuing MBA to transition into product management"
+
+```json
+{
+  "memory": "Recently promoted to Team Lead at their tech startup",
+  "categories": ["career"],
+  "type": "episodic"
+}
+```
+
+### Interests
+Hobbies, passions, and activities the user enjoys in their personal time.
+
+**Examples:**
+- "Passionate about photography and hiking"
+- "Enjoys cooking Italian cuisine on weekends"
+- "Avid reader of science fiction novels"
+
+```json
+{
+  "memory": "Recently started learning guitar and practicing daily",
+  "categories": ["interests", "learning"],
+  "type": "episodic"
+}
+```
+
+### Relationships
+Social connections, family relationships, and interpersonal dynamics.
+
+**Examples:**
+- "Married to Sarah, together for 5 years"
+- "Close relationship with parents, calls them weekly"
+- "Mentors junior developers at work"
+
+```json
+{
+  "memory": "Has a close group of college friends who meet monthly for board games",
+  "categories": ["relationships", "interests"],
+  "type": "semantic"
+}
+```
+
+### Health
+Physical and mental health information, fitness goals, and wellness practices.
+
+**Examples:**
+- "Training for a marathon, runs 30 miles per week"
+- "Follows a vegetarian diet for ethical reasons"
+- "Practices meditation for stress management"
+
+```json
+{
+  "memory": "Recently started therapy to work on work-life balance",
+  "categories": ["health", "productivity"],
+  "type": "episodic"
+}
+```
+
+### Finance
+Financial situation, goals, and money-related decisions and preferences.
+
+**Examples:**
+- "Saving for a house down payment, budget of $500K"
+- "Invests in index funds and retirement accounts"
+- "Budgets carefully and tracks all expenses"
+
+```json
+{
+  "memory": "Recently started investing in individual stocks after research",
+  "categories": ["finance", "learning"],
+  "type": "episodic"
+}
+```
+
+### Learning
+Educational pursuits, skill development, and knowledge acquisition.
+
+**Examples:**
+- "Currently learning Spanish through Duolingo"
+- "Taking online courses in data visualization"
+- "Reading books about behavioral psychology"
+
+```json
+{
+  "memory": "Completed AWS certification and planning to pursue advanced certification",
+  "categories": ["learning", "career"],
+  "type": "episodic"
+}
+```
+
+### Travel
+Travel experiences, plans, preferences, and location-related information.
+
+**Examples:**
+- "Loves exploring national parks, visited 15 so far"
+- "Planning a trip to Japan for cherry blossom season"
+- "Prefers sustainable travel and eco-friendly accommodations"
+
+```json
+{
+  "memory": "Recently returned from a solo backpacking trip through Southeast Asia",
+  "categories": ["travel", "interests"],
+  "type": "episodic"
+}
+```
+
+### Productivity
+Work habits, organizational systems, tools, and productivity preferences.
+
+**Examples:**
+- "Uses Notion for project management and note-taking"
+- "Prefers working in focused 2-hour blocks"
+- "Struggles with email management and time blocking"
+
+```json
+{
+  "memory": "Recently adopted Getting Things Done methodology for task management",
+  "categories": ["productivity", "learning"],
+  "type": "episodic"
+}
+```
+
+### Private
+Sensitive information that should be handled with special care.
+
+**Examples:**
+- Social Security numbers, passwords, private addresses
+- Medical diagnoses or sensitive health information
+- Financial account numbers or private financial details
+
+```json
+{
+  "memory": "Has been dealing with anxiety, takes medication as needed",
+  "categories": ["private", "health"],
+  "type": "semantic"
+}
+```
+
+## Multiple Categories
+
+Memories can belong to multiple categories when they span different aspects of a user's life:
+
+### Common Combinations
+
+<AccordionGroup>
+  <Accordion title="Career + Learning">
+    Professional development activities
+    
+    ```json
+    {
+      "memory": "Taking a course in advanced React to improve frontend skills at work",
+      "categories": ["career", "learning"],
+      "type": "episodic"
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Interests + Health">
+    Hobbies that also benefit physical or mental health
+    
+    ```json
+    {
+      "memory": "Practices yoga 3 times a week for both fitness and stress relief",
+      "categories": ["interests", "health"],
+      "type": "semantic"
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Relationships + Travel">
+    Social activities involving travel
+    
+    ```json
+    {
+      "memory": "Planning annual ski trip with college friends to Colorado",
+      "categories": ["relationships", "travel"],
+      "type": "episodic"
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Productivity + Career">
+    Work-related organizational systems
+    
+    ```json
+    {
+      "memory": "Uses Slack and Asana to coordinate with remote team members",
+      "categories": ["productivity", "career"],
+      "type": "semantic"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Category-Based Search
+
+Use categories to find specific types of information about users:
+
+### Single Category Search
+
+```python
+# Find career-related memories
+career_memories = memsync.search_memories(
+    query="What does the user do professionally?",
+    categories=["career"],
+    limit=10
+)
+
+# Find current interests
+interest_memories = memsync.search_memories(
+    query="What are the user's hobbies?",
+    categories=["interests"],
+    limit=8
+)
+```
+
+### Multiple Category Search
+
+```python
+# Find learning and career overlap
+professional_development = memsync.search_memories(
+    query="What skills is the user developing?",
+    categories=["career", "learning"],
+    limit=15
+)
+
+# Find health and productivity intersection
+wellness_habits = memsync.search_memories(
+    query="How does the user maintain work-life balance?",
+    categories=["health", "productivity"],
+    limit=10
+)
+```
+
+### All Categories Search
+
+```python
+# Comprehensive user overview
+all_memories = memsync.search_memories(
+    query="Tell me about this user",
+    limit=20,
+    rerank=True
+)
+```
+
+## Category Distribution Insights
+
+Understanding how memories are distributed across categories can provide insights:
+
+### Typical Distribution
+- **Career**: 25-30% of memories
+- **Interests**: 20-25% of memories  
+- **Learning**: 15-20% of memories
+- **Relationships**: 10-15% of memories
+- **Health**: 8-12% of memories
+- **Productivity**: 6-10% of memories
+- **Identity**: 5-8% of memories
+- **Travel**: 3-7% of memories
+- **Finance**: 2-5% of memories
+- **Private**: 1-3% of memories
+
+<Note>
+Distribution varies significantly based on user conversation patterns, application type, and personal disclosure preferences.
+</Note>
+
+## Best Practices
+
+### For Memory Extraction
+
+<AccordionGroup>
+  <Accordion title="Rich Context">
+    Provide detailed conversation context to help MemSync accurately categorize memories.
+    
+    ```python
+    # Good: Provides context for categorization
+    messages = [
+        {"role": "user", "content": "I've been learning Python at work to automate our data pipeline tasks"},
+        {"role": "assistant", "content": "That's great! Automation can save a lot of time in data workflows"}
+    ]
+    # Result: Likely categorized as ["career", "learning"]
+    ```
+  </Accordion>
+
+  <Accordion title="Specific Information">
+    Include specific details that help with accurate categorization.
+    
+    ```python
+    # Better than: "I like to exercise"
+    # Use: "I go rock climbing twice a week at the local gym for fitness and stress relief"
+    # Result: Categories ["interests", "health"]
+    ```
+  </Accordion>
+
+  <Accordion title="Multiple Contexts">
+    Don't avoid mentioning when activities span multiple life areas.
+    
+    ```python
+    # Good: Shows intersection of categories
+    "I'm taking evening MBA classes while working full-time to prepare for a career transition"
+    # Result: Categories ["learning", "career"]
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### For Search Optimization
+
+<AccordionGroup>
+  <Accordion title="Category-Specific Queries">
+    Tailor your search queries to specific categories for better results.
+    
+    ```python
+    # Instead of generic queries, be category-specific
+    career_query = "What is the user's professional background and current role?"
+    interest_query = "What activities does the user enjoy in their free time?"
+    ```
+  </Accordion>
+
+  <Accordion title="Cross-Category Insights">
+    Look for patterns across categories to understand user holistically.
+    
+    ```python
+    # Find connections between work and personal life
+    work_life_balance = memsync.search_memories(
+        query="How does the user balance professional and personal priorities?",
+        categories=["career", "health", "relationships"],
+        limit=15
+    )
+    ```
+  </Accordion>
+
+  <Accordion title="Progressive Refinement">
+    Start broad, then narrow down based on initial results.
+    
+    ```python
+    # Step 1: Broad search
+    general_memories = memsync.search_memories(query="user overview", limit=20)
+    
+    # Step 2: Focus on most relevant categories found
+    specific_memories = memsync.search_memories(
+        query="user career goals", 
+        categories=["career", "learning"], 
+        limit=10
+    )
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Category Evolution
+
+Categories can provide insights into how users change over time:
+
+### Tracking Changes
+- **New categories appearing**: User exploring new areas of life
+- **Category frequency changes**: Shifting priorities or life phases
+- **Cross-category connections**: Growing integration of different life aspects
+
+### Example Evolution
+```python
+# Early conversations: Heavy focus on career
+early_categories = ["career", "learning", "productivity"]
+
+# Later conversations: More balanced life interests
+later_categories = ["career", "interests", "relationships", "health", "travel"]
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Semantic Search" icon="search" href="/essentials/search">
+    Learn how to search across categories effectively
+  </Card>
+  
+  <Card title="User Profiles" icon="user" href="/essentials/profiles">
+    Understand how categories combine to create user profiles
+  </Card>
+  
+  <Card title="Memory Types" icon="brain" href="/essentials/memory-types">
+    Learn about semantic vs episodic memory classification
+  </Card>
+  
+  <Card title="API Reference" icon="code" href="/api-reference/introduction">
+    Explore API endpoints for category-based operations
+  </Card>
+</CardGroup> 

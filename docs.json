@@ -1,13 +1,12 @@
 {
-  "$schema": "https://mintlify.com/docs.json",
+  "name": "MemSync Docs",
   "theme": "mint",
-  "name": "Mint Starter Kit",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#0EA5E9",
+    "light": "#38BDF8",
+    "dark": "#0284C7"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/images/memsync_logo.png",
   "navigation": {
     "tabs": [
       {
@@ -22,14 +21,14 @@
             ]
           },
           {
-            "group": "Essentials",
+            "group": "Core Concepts",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/settings",
-              "essentials/navigation",
-              "essentials/reusable-snippets"
+              "essentials/memory-types",
+              "essentials/categories",
+              "essentials/search",
+              "essentials/profiles",
+              "essentials/integrations",
+              "essentials/authentication"
             ]
           }
         ]
@@ -38,18 +37,44 @@
         "tab": "API Reference",
         "groups": [
           {
-            "group": "API Documentation",
+            "group": "Getting Started",
             "pages": [
               "api-reference/introduction"
             ]
           },
           {
-            "group": "Endpoint Examples",
+            "group": "Memory Management",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/endpoint/store-memories",
+              "api-reference/endpoint/search-memories",
+              "api-reference/endpoint/get-memories",
+              "api-reference/endpoint/update-memory",
+              "api-reference/endpoint/delete-memory"
+            ]
+          },
+          {
+            "group": "User Profiles",
+            "pages": [
+              "api-reference/endpoint/get-profile",
+              "api-reference/endpoint/get-bio",
+              "api-reference/endpoint/update-bio"
+            ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "api-reference/endpoint/social-integration",
+              "api-reference/endpoint/file-integration",
+              "api-reference/endpoint/chat-integration",
+              "api-reference/endpoint/integration-status"
+            ]
+          },
+          {
+            "group": "API Keys",
+            "pages": [
+              "api-reference/endpoint/create-api-key",
+              "api-reference/endpoint/list-api-keys",
+              "api-reference/endpoint/delete-api-key"
             ]
           }
         ]
@@ -58,45 +83,45 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
+          "anchor": "GitHub",
+          "href": "https://github.com/memsync/memsync",
+          "icon": "github"
         },
         {
-          "anchor": "Community",
-          "href": "https://mintlify.com/community",
-          "icon": "slack"
+          "anchor": "MemSync X",
+          "href": "https://x.com/memsync_ai",
+          "icon": "x-twitter"
         },
         {
           "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
+          "href": "https://memsync.ai/blog",
           "icon": "newspaper"
         }
       ]
     }
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/images/memsync-light.png",
+    "dark": "/images/memsync-dark.png"
   },
   "navbar": {
     "links": [
       {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "label": "Dashboard",
+        "href": "https://app.memsync.ai"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Get Started",
+      "href": "https://www.opengradient.ai/memsync"
     }
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/memsyncai",
+      "github": "https://github.com/memsync/memsync",
+      "linkedin": "https://linkedin.com/company/memsync"
     }
   }
 }

@@ -1,0 +1,194 @@
+---
+title: "Social Media Integration"
+api: "POST /integrations/social"
+description: "Connect and sync memories from social media platforms"
+---
+
+Connects social media accounts to automatically import memories from posts, interactions, and activities.
+
+<RequestExample>
+
+```bash cURL
+curl -X POST 'https://api.memsync.ai/integrations/social' \
+  -H 'Authorization: Bearer YOUR_JWT_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "platform": "linkedin",
+    "auth_token": "linkedin_access_token_here",
+    "import_settings": {
+      "posts": true,
+      "connections": true,
+      "activities": false
+    }
+  }'
+```
+
+```python Python
+import requests
+
+url = "https://api.memsync.ai/integrations/social"
+headers = {
+    "Authorization": "Bearer YOUR_JWT_TOKEN",
+    "Content-Type": "application/json"
+}
+
+data = {
+    "platform": "linkedin",
+    "auth_token": "linkedin_access_token_here",
+    "import_settings": {
+        "posts": True,
+        "connections": True,
+        "activities": False
+    }
+}
+
+response = requests.post(url, headers=headers, json=data)
+integration = response.json()
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.memsync.ai/integrations/social', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_JWT_TOKEN',
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    platform: 'linkedin',
+    auth_token: 'linkedin_access_token_here',
+    import_settings: {
+      posts: true,
+      connections: true,
+      activities: false
+    }
+  }),
+});
+
+const integration = await response.json();
+```
+
+</RequestExample>
+
+## Request Body
+
+<ParamField body="platform" type="string" required>
+  Social media platform to integrate. Supported: `linkedin`, `twitter`, `reddit`
+</ParamField>
+
+<ParamField body="auth_token" type="string" required>
+  OAuth access token for the platform
+</ParamField>
+
+<ParamField body="import_settings" type="object">
+  Configuration for what data to import
+  
+  <Expandable title="Import Settings">
+    <ParamField body="posts" type="boolean" default="true">
+      Import user's posts and updates
+    </ParamField>
+    <ParamField body="connections" type="boolean" default="true">
+      Import connections and network information
+    </ParamField>
+    <ParamField body="activities" type="boolean" default="false">
+      Import likes, comments, and other activities
+    </ParamField>
+    <ParamField body="messages" type="boolean" default="false">
+      Import direct messages (if available)
+    </ParamField>
+    <ParamField body="date_range" type="object">
+      Date range for import (defaults to last 6 months)
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="auto_sync" type="boolean" default="true">
+  Whether to automatically sync new content
+</ParamField>
+
+<ParamField body="categories" type="object">
+  Category mapping for imported content
+</ParamField>
+
+## Response
+
+<ResponseField name="integration_id" type="string">
+  Unique identifier for the integration
+</ResponseField>
+
+<ResponseField name="platform" type="string">
+  Social media platform that was connected
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  Current status: `connected`, `syncing`, `error`, `disconnected`
+</ResponseField>
+
+<ResponseField name="import_stats" type="object">
+  Statistics about the import process
+  
+  <Expandable title="Import Statistics">
+    <ResponseField name="total_items" type="number">
+      Total items found for import
+    </ResponseField>
+    <ResponseField name="imported_memories" type="number">
+      Number of memories successfully imported
+    </ResponseField>
+    <ResponseField name="skipped_items" type="number">
+      Items skipped (duplicates, filtered out, etc.)
+    </ResponseField>
+    <ResponseField name="errors" type="number">
+      Number of import errors
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="last_sync" type="string">
+  ISO 8601 timestamp of last successful sync
+</ResponseField>
+
+<ResponseField name="next_sync" type="string">
+  ISO 8601 timestamp of next scheduled sync
+</ResponseField>
+
+<ResponseExample>
+
+```json Response
+{
+  "integration_id": "int_linkedin_123",
+  "platform": "linkedin",
+  "status": "syncing",
+  "import_stats": {
+    "total_items": 147,
+    "imported_memories": 89,
+    "skipped_items": 52,
+    "errors": 6
+  },
+  "last_sync": "2024-01-15T16:30:00Z",
+  "next_sync": "2024-01-16T16:30:00Z"
+}
+```
+
+</ResponseExample>
+
+## Supported Platforms
+
+<Accordion title="LinkedIn">
+  - **Posts**: Professional updates, articles, shares
+  - **Connections**: Network connections and introductions
+  - **Activities**: Likes, comments on professional content
+  - **Categories**: Primarily `career`, `relationships`, `learning`
+</Accordion>
+
+<Accordion title="Twitter">
+  - **Posts**: Tweets, retweets, quoted tweets
+  - **Connections**: Followers, following, lists
+  - **Activities**: Likes, replies, mentions
+  - **Categories**: `interests`, `relationships`, `identity`
+</Accordion>
+
+<Accordion title="Reddit">
+  - **Posts**: Submissions, comments, saved posts
+  - **Connections**: Followed users and communities
+  - **Activities**: Upvotes, subscriptions
+  - **Categories**: `interests`, `learning`, `identity`
+</Accordion> 

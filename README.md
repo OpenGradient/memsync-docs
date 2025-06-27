@@ -1,32 +1,42 @@
-# Mintlify Starter Kit
+# MemSync Documentation
 
-Click on `Use this template` to copy the Mintlify starter kit. The starter kit contains examples including
+This repository contains the comprehensive documentation for MemSync, a powerful platform for building personalized AI experiences through long-term memory management.
 
-- Guide pages
-- Navigation
-- Customizations
-- API Reference pages
-- Use of popular components
+## Development
 
-### Development
+To run the documentation locally, you'll need to install and use the documentation tools.
 
-Install the [Mintlify CLI](https://www.npmjs.com/package/mint) to preview the documentation changes locally. To install, use the following command
+### Prerequisites
 
-```
-npm i -g mint
+Make sure you have Node.js installed, then install the documentation CLI:
+
+```bash
+npm i -g @mintlify/mdx
 ```
 
-Run the following command at the root of your documentation (where docs.json is)
+### Running Locally
 
+Start the local development server:
+
+```bash
+npx @mintlify/mdx dev
 ```
-mint dev
-```
 
-### Publishing Changes
+The documentation will be available at `http://localhost:3000`.
 
-Install our Github App to auto propagate changes from your repo to your deployment. Changes will be deployed to production automatically after pushing to the default branch. Find the link to install on your dashboard. 
+### Common Issues
 
-#### Troubleshooting
+- If the dev environment isn't running - Run `npm install` to re-install dependencies.
 
-- It the dev environment isn't running - Run `mint install` it'll re-install dependencies.
-- Page loads as a 404 - Make sure you are running in a folder with `docs.json`
+## Contributing
+
+When contributing to the documentation:
+
+1. Follow the existing structure and formatting
+2. Test changes locally before submitting
+3. Ensure all links and references work correctly
+4. Update navigation in `docs.json` if adding new pages
+
+## Deployment
+
+The documentation is automatically deployed when changes are pushed to the main branch.

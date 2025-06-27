@@ -1,0 +1,670 @@
+---
+title: 'Integrations'
+description: 'Connect MemSync with external data sources and services'
+---
+
+# Integrations
+
+MemSync can import and process data from various external sources to enrich user profiles and memories. These integrations allow you to build comprehensive user context from existing digital footprints.
+
+## Available Integrations
+
+<CardGroup cols={3}>
+  <Card title="Social Media" icon="share-nodes">
+    Import posts, interactions, and profile data from social platforms
+  </Card>
+  
+  <Card title="Documents" icon="file-text">
+    Process PDFs, Word docs, and other file formats
+  </Card>
+  
+  <Card title="Chat History" icon="messages">
+    Import conversation history from messaging platforms
+  </Card>
+</CardGroup>
+
+## Social Media Integrations
+
+### LinkedIn
+
+Import professional information, posts, and network data from LinkedIn profiles.
+
+```python
+import requests
+
+# Index LinkedIn profile data
+response = requests.post("https://api.memsync.ai/v1/integrations/index/social",
+    headers={"Authorization": "Bearer YOUR_TOKEN"},
+    json={
+        "type": "LINKEDIN",
+        "username": "john-doe-engineer",
+        "agent_id": "my-chatbot",
+        "thread_id": "integration-001",
+        "config": {
+            "include_posts": True,
+            "include_connections": False,
+            "max_posts": 50
+        }
+    }
+)
+
+print(f"Task ID: {response.json()['task_id']}")
+```
+
+**What gets imported:**
+- Professional experience and education
+- Skills and endorsements
+- Published posts and articles
+- Professional summary and bio
+- Certifications and achievements
+
+### Twitter/X
+
+Import tweets, interactions, and profile information.
+
+```python
+# Index Twitter profile data
+response = requests.post("https://api.memsync.ai/v1/integrations/index/social",
+    headers={"Authorization": "Bearer YOUR_TOKEN"},
+    json={
+        "type": "TWITTER",
+        "username": "johndoe_dev",
+        "agent_id": "my-chatbot", 
+        "thread_id": "integration-002",
+        "config": {
+            "include_tweets": True,
+            "include_replies": False,
+            "max_tweets": 100
+        }
+    }
+)
+```
+
+**What gets imported:**
+- Recent tweets and retweets
+- Bio and profile information
+- Interests inferred from activity
+- Communication style and tone
+- Topics of discussion
+
+### Reddit
+
+Import posts, comments, and subreddit activity.
+
+```python
+# Index Reddit activity
+response = requests.post("https://api.memsync.ai/v1/integrations/index/social",
+    headers={"Authorization": "Bearer YOUR_TOKEN"},
+    json={
+        "type": "REDDIT",
+        "username": "johndoe_reddit",
+        "agent_id": "my-chatbot",
+        "thread_id": "integration-003",
+        "config": {
+            "include_posts": True,
+            "include_comments": True,
+            "max_items": 200
+        }
+    }
+)
+```
+
+**What gets imported:**
+- Posts and comments across subreddits
+- Interests and hobbies from subreddit activity
+- Opinions and preferences
+- Communication patterns
+- Areas of expertise or interest
+
+## Document Integration
+
+### File Upload and Processing
+
+Process various document formats to extract meaningful information.
+
+```python
+# Index document content
+response = requests.post("https://api.memsync.ai/v1/integrations/index/file",
+    headers={"Authorization": "Bearer YOUR_TOKEN"},
+    json={
+        "type": "FILE",
+        "url": "https://example.com/resume.pdf",
+        "agent_id": "my-chatbot",
+        "thread_id": "integration-004",
+        "config": {
+            "extract_metadata": True,
+            "chunk_size": 1000,
+            "process_images": False
+        }
+    }
+)
+```
+
+**Supported formats:**
+- PDF documents
+- Word documents (.docx, .doc)
+- Plain text files
+- Markdown files
+- PowerPoint presentations
+- Excel spreadsheets
+
+**What gets extracted:**
+- Key facts and information
+- Professional experience (from resumes)
+- Educational background
+- Skills and certifications
+- Project descriptions
+- Personal notes and insights
+
+### Document Processing Examples
+
+<AccordionGroup>
+  <Accordion title="Resume Processing">
+    Extract career information from CV/resume documents
+    
+    ```python
+    # Process resume document
+    resume_integration = {
+        "type": "FILE",
+        "url": "https://storage.example.com/resume.pdf",
+        "config": {
+            "document_type": "resume",
+            "extract_contact_info": True,
+            "extract_skills": True,
+            "extract_experience": True
+        }
+    }
+    ```
+    
+    **Extracted memories:**
+    - Work experience and job titles
+    - Educational qualifications
+    - Technical and soft skills
+    - Certifications and achievements
+  </Accordion>
+
+  <Accordion title="Personal Notes">
+    Process personal documents and journals
+    
+    ```python
+    # Process personal notes
+    notes_integration = {
+        "type": "FILE", 
+        "url": "https://storage.example.com/personal-notes.docx",
+        "config": {
+            "document_type": "personal",
+            "extract_goals": True,
+            "extract_interests": True,
+            "privacy_level": "high"
+        }
+    }
+    ```
+    
+    **Extracted memories:**
+    - Personal goals and aspirations
+    - Interests and hobbies
+    - Thoughts and reflections
+    - Plans and projects
+  </Accordion>
+
+  <Accordion title="Academic Papers">
+    Extract research interests and expertise areas
+    
+    ```python
+    # Process academic work
+    academic_integration = {
+        "type": "FILE",
+        "url": "https://storage.example.com/research-paper.pdf", 
+        "config": {
+            "document_type": "academic",
+            "extract_keywords": True,
+            "extract_methodology": True
+        }
+    }
+    ```
+    
+    **Extracted memories:**
+    - Research interests and specializations
+    - Academic achievements
+    - Technical expertise areas
+    - Methodological preferences
+  </Accordion>
+</AccordionGroup>
+
+## Chat History Integration
+
+### ChatGPT History
+
+Import conversation history from ChatGPT to understand user interaction patterns.
+
+```python
+# Index ChatGPT conversation history
+response = requests.post("https://api.memsync.ai/v1/integrations/index/chat",
+    headers={"Authorization": "Bearer YOUR_TOKEN"},
+    json={
+        "type": "CHATGPT",
+        "url": "https://storage.example.com/chatgpt-conversations.json",
+        "agent_id": "my-chatbot",
+        "thread_id": "integration-005",
+        "config": {
+            "filter_by_date": "2024-01-01",
+            "include_system_messages": False,
+            "max_conversations": 50
+        }
+    }
+)
+```
+
+**What gets imported:**
+- Conversation topics and themes
+- Questions and interests
+- Problem-solving patterns
+- Communication preferences
+- Learning goals and objectives
+
+### Custom Chat Platforms
+
+You can also integrate with custom chat platforms by formatting the data appropriately:
+
+```python
+# Format custom chat data
+chat_data = {
+    "conversations": [
+        {
+            "id": "conv_001",
+            "messages": [
+                {"role": "user", "content": "I'm working on a React project"},
+                {"role": "assistant", "content": "That's great! What kind of React project?"}
+            ],
+            "timestamp": "2024-03-20T10:00:00Z"
+        }
+    ]
+}
+
+# Upload and process
+response = requests.post("https://api.memsync.ai/v1/integrations/index/chat",
+    headers={"Authorization": "Bearer YOUR_TOKEN"},
+    json={
+        "type": "CHATGPT",  # Use CHATGPT type for custom formatted data
+        "data": chat_data,
+        "agent_id": "my-chatbot",
+        "thread_id": "integration-006"
+    }
+)
+```
+
+## Integration Workflow
+
+### Asynchronous Processing
+
+All integrations are processed asynchronously to handle large datasets efficiently:
+
+<Steps>
+  <Step title="Submit Integration Request">
+    Send a request to the appropriate integration endpoint
+  </Step>
+  
+  <Step title="Receive Task ID">
+    Get a task ID to track the processing status
+  </Step>
+  
+  <Step title="Monitor Progress">
+    Use the task ID to check processing status
+  </Step>
+  
+  <Step title="Access Results">
+    Once complete, memories are automatically added to the user's profile
+  </Step>
+</Steps>
+
+### Checking Integration Status
+
+```python
+# Check integration status
+def check_integration_status(task_id):
+    response = requests.get(f"https://api.memsync.ai/v1/integrations/status/{task_id}",
+        headers={"Authorization": "Bearer YOUR_TOKEN"}
+    )
+    
+    status = response.json()
+    print(f"Status: {status['status']}")
+    
+    if status['status'] == 'SUCCESS':
+        print(f"Processed items: {status['result']['indexed_items']}")
+        print(f"Processing time: {status['result']['processing_time']}")
+    elif status['status'] == 'FAILED':
+        print(f"Error: {status['error_message']}")
+    
+    return status
+```
+
+### Status Responses
+
+```json
+{
+  "task_id": "task_123",
+  "status": "SUCCESS",
+  "result": {
+    "indexed_items": 150,
+    "processing_time": "2.5s",
+    "memories_created": 45,
+    "categories_found": ["career", "interests", "learning"]
+  },
+  "error_message": null
+}
+```
+
+## Integration Configuration
+
+### Common Configuration Options
+
+<AccordionGroup>
+  <Accordion title="Content Filtering">
+    Control what content gets processed
+    
+    ```python
+    config = {
+        "date_range": {
+            "start": "2024-01-01",
+            "end": "2024-12-31"
+        },
+        "content_types": ["posts", "comments"],
+        "exclude_retweets": True,
+        "min_content_length": 50
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Privacy Settings">
+    Control how sensitive information is handled
+    
+    ```python
+    config = {
+        "privacy_level": "high",  # high, medium, low
+        "exclude_private_info": True,
+        "anonymize_names": False,
+        "exclude_sensitive_categories": ["finance", "health"]
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Processing Options">
+    Customize how content is processed
+    
+    ```python
+    config = {
+        "chunk_size": 1000,  # For document processing
+        "extract_metadata": True,
+        "language": "en",
+        "summarize_long_content": True
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Rate Limiting">
+    Control processing speed to respect API limits
+    
+    ```python
+    config = {
+        "rate_limit": 10,  # requests per second
+        "batch_size": 50,
+        "retry_on_failure": True,
+        "max_retries": 3
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+### Data Quality
+
+<AccordionGroup>
+  <Accordion title="Source Selection">
+    Choose high-quality, relevant data sources
+    
+    - Recent data is generally more valuable than old data
+    - Professional platforms (LinkedIn) for career information
+    - Social platforms for interests and personality
+    - Personal documents for goals and aspirations
+  </Accordion>
+
+  <Accordion title="Content Filtering">
+    Filter out low-quality or irrelevant content
+    
+    ```python
+    # Good filtering practices
+    config = {
+        "min_content_length": 50,  # Skip very short posts
+        "exclude_spam": True,
+        "language": "en",  # Focus on user's primary language
+        "relevance_threshold": 0.7
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Privacy Considerations">
+    Respect user privacy and data sensitivity
+    
+    - Always get explicit user consent
+    - Exclude sensitive personal information
+    - Allow users to review imported data
+    - Provide data deletion options
+  </Accordion>
+</AccordionGroup>
+
+### Performance Optimization
+
+<AccordionGroup>
+  <Accordion title="Batch Processing">
+    Process data in appropriate batch sizes
+    
+    ```python
+    # Optimal batch sizes by source type
+    batch_sizes = {
+        "twitter": 100,
+        "linkedin": 50, 
+        "reddit": 200,
+        "documents": 10
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Incremental Updates">
+    Process only new data for regular updates
+    
+    ```python
+    # Track last integration date
+    last_integration = get_last_integration_date(user_id, "twitter")
+    
+    config = {
+        "since_date": last_integration,
+        "incremental": True
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Error Handling">
+    Implement robust error handling for integrations
+    
+    ```python
+    def robust_integration(integration_request):
+        try:
+            response = requests.post("/v1/integrations/index/social", 
+                json=integration_request, timeout=30)
+            return response.json()
+        except requests.exceptions.Timeout:
+            return {"error": "Integration timed out, try smaller batch"}
+        except requests.exceptions.HTTPError as e:
+            return {"error": f"HTTP error: {e.response.status_code}"}
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Security and Privacy
+
+### Authentication
+
+Integrations require proper authentication:
+
+```python
+# Using JWT token
+headers = {
+    "Authorization": "Bearer YOUR_JWT_TOKEN",
+    "Content-Type": "application/json"
+}
+
+# Using API key (coming soon)
+headers = {
+    "X-API-Key": "YOUR_API_KEY",
+    "Content-Type": "application/json"
+}
+```
+
+### Data Handling
+
+- **Encryption**: All data is encrypted in transit and at rest
+- **Access Control**: Only authorized users can access integration data
+- **Audit Logs**: All integration activities are logged for security
+- **Data Retention**: Users can control how long integration data is stored
+
+### Compliance
+
+MemSync integrations comply with:
+- **GDPR**: Right to access, modify, and delete personal data
+- **CCPA**: California Consumer Privacy Act requirements
+- **SOC 2**: Security and privacy controls
+- **Platform ToS**: Respect for third-party platform terms of service
+
+## Common Use Cases
+
+### Onboarding New Users
+
+```python
+def onboard_user_with_integrations(user_id, integration_preferences):
+    """Quickly build user profile from external sources"""
+    
+    integrations = []
+    
+    # Professional background
+    if integration_preferences.get('linkedin'):
+        linkedin_task = start_linkedin_integration(
+            username=integration_preferences['linkedin_username']
+        )
+        integrations.append(linkedin_task)
+    
+    # Personal interests
+    if integration_preferences.get('reddit'):
+        reddit_task = start_reddit_integration(
+            username=integration_preferences['reddit_username']
+        )
+        integrations.append(reddit_task)
+    
+    # Monitor all integrations
+    return monitor_integrations(integrations)
+```
+
+### Profile Enrichment
+
+```python
+def enrich_existing_profile(user_id):
+    """Enhance existing profile with additional data sources"""
+    
+    current_profile = get_user_profile(user_id)
+    
+    # Identify gaps in profile
+    missing_categories = identify_missing_categories(current_profile)
+    
+    # Suggest relevant integrations
+    suggestions = []
+    if 'career' in missing_categories:
+        suggestions.append("Consider importing LinkedIn data")
+    if 'interests' in missing_categories:
+        suggestions.append("Consider importing social media data")
+    
+    return suggestions
+```
+
+### Data Migration
+
+```python
+def migrate_from_other_platform(user_id, platform_data):
+    """Migrate user data from another platform"""
+    
+    # Format data for MemSync
+    formatted_conversations = format_conversations(platform_data)
+    
+    # Import as chat history
+    task = start_chat_integration(
+        data=formatted_conversations,
+        user_id=user_id
+    )
+    
+    return task
+```
+
+## Troubleshooting
+
+### Common Issues
+
+<AccordionGroup>
+  <Accordion title="Integration Failures">
+    **Possible causes:**
+    - Invalid username or profile not found
+    - Rate limiting from source platform
+    - Authentication issues
+    - Network connectivity problems
+    
+    **Solutions:**
+    - Verify usernames and profile accessibility
+    - Implement retry logic with exponential backoff
+    - Check authentication credentials
+    - Monitor API rate limits
+  </Accordion>
+
+  <Accordion title="Low Quality Results">
+    **Possible causes:**
+    - Insufficient source data
+    - Poor data quality in source
+    - Incorrect configuration
+    
+    **Solutions:**
+    - Increase data volume if available
+    - Filter out low-quality content
+    - Adjust processing parameters
+    - Try different time ranges
+  </Accordion>
+
+  <Accordion title="Processing Timeouts">
+    **Possible causes:**
+    - Large dataset size
+    - Complex document processing
+    - System load
+    
+    **Solutions:**
+    - Reduce batch sizes
+    - Split large integrations into smaller chunks
+    - Retry failed integrations
+    - Contact support for assistance
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key" href="/essentials/authentication">
+    Learn about authentication methods for integrations
+  </Card>
+  
+  <Card title="Memory Types" icon="brain" href="/essentials/memory-types">
+    Understand how integrated data becomes memories
+  </Card>
+  
+  <Card title="User Profiles" icon="user" href="/essentials/profiles">
+    See how integrations enrich user profiles
+  </Card>
+  
+  <Card title="Integration APIs" icon="code" href="/api-reference/endpoint/social-integration">
+    Explore the complete integration API documentation
+  </Card>
+</CardGroup> 

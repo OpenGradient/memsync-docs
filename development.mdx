@@ -1,107 +1,439 @@
 ---
 title: 'Development'
-description: 'Preview changes locally to update your docs'
+description: 'Development setup and testing with MemSync'
 ---
 
+## Development Environment Setup
+
+This guide covers setting up MemSync for local development, testing, and contributing to the project.
+
 <Info>
-  **Prerequisite**: Please install Node.js (version 19 or higher) before proceeding. <br />
-  Please upgrade to ```docs.json``` before proceeding and delete the legacy ```mint.json``` file.
+  **Prerequisites**: Python 3.9+, PostgreSQL, and Redis are required for local development.
 </Info>
 
-Follow these steps to install and run Mintlify on your operating system:
+## Local Installation
 
-**Step 1**: Install Mintlify:
+### Step 1: Clone the Repository
+
+```bash
+git clone https://github.com/memsync/memsync.git
+cd memsync
+```
+
+### Step 2: Install Dependencies
+
+MemSync uses Poetry for dependency management:
 
 <CodeGroup>
 
-  ```bash npm
-  npm i -g mintlify
-  ```
+```bash Install with Poetry
+poetry install
+```
 
-```bash yarn
-yarn global add mintlify
+```bash Install All Dependencies
+poetry install
+poetry run pip install groq together boto3 litellm ollama chromadb weaviate weaviate-client sentence_transformers vertexai \
+                    google-generativeai elasticsearch opensearch-py vecs pinecone pinecone-text faiss-cpu langchain-community \
+                    upstash-vector azure-search-documents
 ```
 
 </CodeGroup>
 
-**Step 2**: Navigate to the docs directory (where the `docs.json` file is located) and execute the following command:
+### Step 3: Environment Configuration
+
+Create a `.env` file in the project root:
+
+```env
+# Database Configuration
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_DB=memsync_dev
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=your_password
+
+# Redis Configuration  
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_DB=0
+
+# API Keys
+OPENAI_API_KEY=your_openai_key
+JWT_SECRET=your_jwt_secret
+
+# Supabase (for authentication)
+SUPABASE_URL=your_supabase_url
+SUPABASE_KEY=your_supabase_key
+```
+
+### Step 4: Database Setup
+
+Initialize the PostgreSQL database with pgvector extension:
 
 ```bash
-mintlify dev
+# Create database and install pgvector
+createdb memsync_dev
+psql memsync_dev -c "CREATE EXTENSION vector;"
+
+# Run migrations
+cd server
+alembic upgrade head
 ```
 
-A local preview of your documentation will be available at `http://localhost:3000`.
-
-### Custom Ports
-
-By default, Mintlify uses port 3000. You can customize the port Mintlify runs on by using the `--port` flag. To run Mintlify on port 3333, for instance, use this command:
-
-```bash
-mintlify dev --port 3333
-```
-
-If you attempt to run Mintlify on a port that's already in use, it will use the next available port:
-
-```md
-Port 3000 is already in use. Trying 3001 instead.
-```
-
-## Mintlify Versions
-
-Please note that each CLI release is associated with a specific version of Mintlify. If your local website doesn't align with the production version, please update the CLI:
+### Step 5: Start Development Server
 
 <CodeGroup>
 
-```bash npm
-npm i -g mintlify@latest
+```bash Start API Server
+cd server
+python main.py
 ```
 
-```bash yarn
-yarn global upgrade mintlify
+```bash With Docker Compose
+docker-compose up -d
 ```
 
 </CodeGroup>
 
-## Validating Links
+The API server will be available at `http://localhost:8000`
 
-The CLI can assist with validating reference links made in your documentation. To identify any broken links, use the following command:
+## Testing
+
+MemSync includes comprehensive test suites for all components:
+
+### Running Tests
 
 ```bash
-mintlify broken-links
+# Run all tests
+poetry run pytest
+
+# Run specific test file
+poetry run pytest tests/test_memory.py
+
+# Run with coverage
+poetry run pytest --cov=memsync tests/
 ```
 
-## Deployment
-
-<Tip>
-  Unlimited editors available under the [Pro
-  Plan](https://mintlify.com/pricing) and above.
-</Tip>
-
-If the deployment is successful, you should see the following:
-
-<Frame>
-  <img src="/images/checks-passed.png" style={{ borderRadius: '0.5rem' }} />
-</Frame>
-
-## Code Formatting
-
-We suggest using extensions on your IDE to recognize and format MDX. If you're a VSCode user, consider the [MDX VSCode extension](https://marketplace.visualstudio.com/items?itemName=unifiedjs.vscode-mdx) for syntax highlighting, and [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) for code formatting.
-
-## Troubleshooting
+### Test Categories
 
 <AccordionGroup>
-  <Accordion title='Error: Could not load the "sharp" module using the darwin-arm64 runtime'>
-
-    This may be due to an outdated version of node. Try the following:
-    1. Remove the currently-installed version of mintlify: `npm remove -g mintlify`
-    2. Upgrade to Node v19 or higher.
-    3. Reinstall mintlify: `npm install -g mintlify`
+  <Accordion title="Unit Tests">
+    Test individual components like memory extraction, embedding generation, and vector operations.
+    
+    ```bash
+    pytest tests/test_memory.py
+    pytest tests/test_embeddings.py
+    pytest tests/test_user_registry.py
+    ```
   </Accordion>
 
-  <Accordion title="Issue: Encountering an unknown error">
-  
-    Solution: Go to the root of your device and delete the \~/.mintlify folder. Afterwards, run `mintlify dev` again.
+  <Accordion title="Integration Tests">
+    Test API endpoints and database interactions.
+    
+    ```bash
+    pytest tests/test_api_key.py
+    pytest tests/test_buffer.py
+    ```
+  </Accordion>
+
+  <Accordion title="Memory Buffer Tests">
+    Test the buffered memory system for conversation processing.
+    
+    ```bash
+    pytest tests/test_buffer.py
+    ```
   </Accordion>
 </AccordionGroup>
 
-Curious about what changed in the CLI version? [Check out the CLI changelog.](https://www.npmjs.com/package/mintlify?activeTab=versions)
+### Integration Testing
+
+Test external integrations with sample data:
+
+```bash
+# Test Reddit integration
+python tests/integration_tester.py --type reddit --username sample_user
+
+# Test memory extraction
+python tests/memory_tester.py --input "sample conversation"
+```
+
+## Development Tools
+
+### Code Quality
+
+MemSync uses several tools to maintain code quality:
+
+<CodeGroup>
+
+```bash Formatting
+# Format code with ruff
+ruff format .
+
+# Run all formatting tools
+make format
+```
+
+```bash Linting
+# Check code with ruff
+ruff check .
+
+# Run pre-commit hooks
+pre-commit run --all-files
+```
+
+```bash Type Checking
+# Run mypy type checking
+mypy memsync/
+```
+
+</CodeGroup>
+
+### Available Make Commands
+
+```bash
+# Install dependencies
+make install
+
+# Run tests
+make test
+
+# Format and lint code
+make format
+
+# Build package
+make build
+
+# Generate documentation
+make docs
+```
+
+## Performance Testing
+
+### Benchmarking
+
+MemSync includes comprehensive benchmarking against the Locomo dataset:
+
+```bash
+# Run memory indexing benchmark
+python evaluation/run_experiments.py \
+   --technique_type memsync \
+   --method add \
+   --input_file evaluation/dataset/locomo10.json
+
+# Run search benchmark  
+python evaluation/run_experiments.py \
+   --technique_type memsync \
+   --method search \
+   --input_file evaluation/dataset/locomo10.json
+
+# Evaluate results
+python evaluation/evals.py \
+   --input_file evaluation/results/memsync_search_results.json
+```
+
+### Performance Metrics
+
+Key metrics tracked:
+- **Memory extraction accuracy**: How well facts are extracted from conversations
+- **Search relevance**: Quality of semantic search results
+- **Storage efficiency**: Memory usage vs. retrieval accuracy
+- **Processing speed**: Time to index and search memories
+
+## API Development
+
+### Testing API Endpoints
+
+Use the interactive API documentation at `http://localhost:8000/docs` or test with curl:
+
+```bash
+# Health check
+curl http://localhost:8000/healthcheck
+
+# Store memories (requires auth)
+curl -X POST "http://localhost:8000/v1/memories" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"messages": [{"role": "user", "content": "Test message"}], "agent_id": "test", "thread_id": "test", "source": "test"}'
+
+# Search memories
+curl -X POST "http://localhost:8000/v1/memories/search" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"query": "test query", "limit": 5}'
+```
+
+### Adding New Endpoints
+
+1. Define request/response models in `server/main.py`
+2. Implement the endpoint function
+3. Add tests in `tests/`
+4. Update API documentation
+
+Example endpoint structure:
+```python
+@app.post("/v1/new-endpoint")
+async def new_endpoint(request: NewEndpointRequest, auth: CurrentAuth):
+    # Validate request
+    # Process with MemSync
+    # Return response
+    pass
+```
+
+## Configuration Options
+
+### Memory Configuration
+
+Customize memory extraction and storage:
+
+```python
+config = {
+    "llm": {
+        "provider": "openai",  # or "gemini"
+        "config": {
+            "model": "gpt-4o",
+            "temperature": 0.0
+        }
+    },
+    "embedder": {
+        "provider": "openai",  # or custom endpoint
+        "config": {
+            "model": "text-embedding-3-large",
+            "embedding_dims": 1024
+        }
+    },
+    "vector_store": {
+        "provider": "pgvector",
+        "config": {
+            "collection_name": "memories_v5",
+            "embedding_model_dims": 1024
+        }
+    },
+    "memory_categories": ["career", "interests", "relationships", ...]
+}
+```
+
+### Integration Configuration
+
+Configure external service integrations:
+
+```python
+# Social media integrations
+REDDIT_CLIENT_ID = "your_reddit_client_id"
+REDDIT_CLIENT_SECRET = "your_reddit_client_secret"
+
+# Document processing
+DOCLING_API_KEY = "your_docling_key"
+
+# Monitoring
+DATADOG_API_KEY = "your_datadog_key"
+```
+
+## Debugging
+
+### Common Issues
+
+<AccordionGroup>
+  <Accordion title="Database Connection Errors">
+    Ensure PostgreSQL is running and pgvector extension is installed:
+    
+    ```bash
+    # Check PostgreSQL status
+    pg_isready
+    
+    # Install pgvector if missing
+    psql -d memsync_dev -c "CREATE EXTENSION IF NOT EXISTS vector;"
+    ```
+  </Accordion>
+
+  <Accordion title="Memory Extraction Not Working">
+    Check LLM configuration and API keys:
+    
+    ```bash
+    # Test OpenAI connection
+    python -c "import openai; print(openai.api_key)"
+    
+    # Check memory extraction logs
+    tail -f logs/memsync.log
+    ```
+  </Accordion>
+
+  <Accordion title="Vector Search Issues">
+    Verify embeddings are being generated correctly:
+    
+    ```bash
+    # Test embedding generation
+    python tests/test_embeddings.py
+    
+    # Check vector store connection
+    python operations/check_embeddings.py
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Logging
+
+Enable detailed logging for debugging:
+
+```python
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
+# Or set environment variable
+export LOG_LEVEL=DEBUG
+```
+
+## Contributing
+
+### Development Workflow
+
+1. **Fork and clone** the repository
+2. **Create a feature branch**: `git checkout -b feature/your-feature`
+3. **Make changes** and add tests
+4. **Run tests**: `pytest`
+5. **Run linting**: `ruff check .`
+6. **Commit changes**: Follow conventional commit format
+7. **Push and create PR**
+
+### Code Standards
+
+- Follow PEP 8 style guidelines
+- Add type hints for all functions
+- Write tests for new functionality
+- Update documentation as needed
+- Use conventional commit messages
+
+### Testing Requirements
+
+All PRs must include:
+- Unit tests for new functionality
+- Integration tests for API changes
+- Performance benchmarks for core features
+- Documentation updates
+
+## Deployment
+
+### Production Setup
+
+1. **Environment variables**: Configure all required environment variables
+2. **Database**: Set up PostgreSQL with pgvector in production
+3. **Redis**: Configure Redis for task queue
+4. **Monitoring**: Set up Datadog or similar monitoring
+5. **Security**: Configure CORS, rate limiting, and authentication
+
+### Docker Deployment
+
+```bash
+# Build production image
+docker build -f server/Dockerfile -t memsync:latest .
+
+# Run with docker-compose
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+For more detailed deployment instructions, see the [deployment guide](https://github.com/memsync/memsync/wiki/Deployment).
+
+## Need Help?
+
+- **Documentation**: Check our [API Reference](/api-reference/introduction)
+- **Issues**: Report bugs on [GitHub Issues](https://github.com/memsync/memsync/issues)
+- **Community**: Join our [Discord community](https://discord.gg/memsync)
+- **Email**: Contact us at [dev@memsync.ai](mailto:dev@memsync.ai)

@@ -1,0 +1,158 @@
+---
+title: "Update User Bio"
+api: "PATCH /profile/bio"
+description: "Update or customize the user's biographical summary"
+---
+
+Allows users to customize their auto-generated bio or provide manual overrides for specific sections.
+
+<RequestExample>
+
+```bash cURL
+curl -X PATCH 'https://api.memsync.ai/profile/bio' \
+  -H 'Authorization: Bearer YOUR_JWT_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "bio": "A passionate software engineer specializing in AI applications for healthcare...",
+    "format": "full",
+    "style": "professional"
+  }'
+```
+
+```python Python
+import requests
+
+url = "https://api.memsync.ai/profile/bio"
+headers = {
+    "Authorization": "Bearer YOUR_JWT_TOKEN",
+    "Content-Type": "application/json"
+}
+
+data = {
+    "bio": "A passionate software engineer specializing in AI applications for healthcare...",
+    "format": "full",
+    "style": "professional"
+}
+
+response = requests.patch(url, headers=headers, json=data)
+bio = response.json()
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.memsync.ai/profile/bio', {
+  method: 'PATCH',
+  headers: {
+    'Authorization': 'Bearer YOUR_JWT_TOKEN',
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    bio: 'A passionate software engineer specializing in AI applications for healthcare...',
+    format: 'full',
+    style: 'professional'
+  }),
+});
+
+const bio = await response.json();
+```
+
+</RequestExample>
+
+## Request Body
+
+<ParamField body="bio" type="string">
+  Custom biographical text to replace auto-generated content
+</ParamField>
+
+<ParamField body="format" type="string">
+  Format for the bio. Options: `full`, `short`, `bullets`, `professional`
+</ParamField>
+
+<ParamField body="style" type="string">
+  Writing style for auto-generation. Options: `narrative`, `factual`, `casual`, `formal`
+</ParamField>
+
+<ParamField body="regenerate" type="boolean" default="false">
+  Whether to regenerate the bio using updated parameters
+</ParamField>
+
+<ParamField body="manual_override" type="boolean" default="false">
+  Whether this is a manual override (prevents auto-regeneration)
+</ParamField>
+
+<ParamField body="include_categories" type="array">
+  Specific categories to include in bio generation
+</ParamField>
+
+<ParamField body="exclude_categories" type="array">
+  Categories to exclude from bio generation
+</ParamField>
+
+## Response
+
+<ResponseField name="bio" type="string">
+  Updated biographical text
+</ResponseField>
+
+<ResponseField name="format" type="string">
+  Format of the bio
+</ResponseField>
+
+<ResponseField name="style" type="string">
+  Writing style used
+</ResponseField>
+
+<ResponseField name="word_count" type="number">
+  Number of words in the updated bio
+</ResponseField>
+
+<ResponseField name="character_count" type="number">
+  Number of characters in the updated bio
+</ResponseField>
+
+<ResponseField name="is_manual" type="boolean">
+  Whether this is a manual override
+</ResponseField>
+
+<ResponseField name="updated_at" type="string">
+  ISO 8601 timestamp when bio was updated
+</ResponseField>
+
+<ResponseExample>
+
+```json Response
+{
+  "bio": "A passionate software engineer specializing in AI applications for healthcare, currently working at an innovative tech startup in San Francisco. With expertise in Python and machine learning, I collaborate with medical professionals to develop solutions that improve patient outcomes.",
+  "format": "professional",
+  "style": "formal", 
+  "word_count": 38,
+  "character_count": 253,
+  "is_manual": true,
+  "updated_at": "2024-01-15T16:45:00Z"
+}
+```
+
+</ResponseExample>
+
+## Error Responses
+
+<ResponseField name="400" type="object">
+  Invalid request data
+  ```json
+  {
+    "error": "Bio text too long",
+    "code": "BIO_TOO_LONG",
+    "max_length": 500,
+    "current_length": 650
+  }
+  ```
+</ResponseField>
+
+<ResponseField name="401" type="object">
+  Unauthorized access
+  ```json
+  {
+    "error": "Invalid or expired token",
+    "code": "UNAUTHORIZED"
+  }
+  ```
+</ResponseField> 

@@ -1,0 +1,298 @@
+---
+title: "Chat Integration"
+api: "POST /integrations/chat"
+description: "Import chat histories and conversations to extract memories"
+---
+
+Import chat histories from various platforms to automatically extract and store conversational memories.
+
+<RequestExample>
+
+```bash cURL
+curl -X POST 'https://api.memsync.ai/integrations/chat' \
+  -H 'Authorization: Bearer YOUR_JWT_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "platform": "chatgpt",
+    "chat_data": [
+      {
+        "timestamp": "2024-01-15T14:30:00Z",
+        "role": "user",
+        "content": "Tell me about machine learning applications in healthcare"
+      },
+      {
+        "timestamp": "2024-01-15T14:30:15Z", 
+        "role": "assistant",
+        "content": "Machine learning has numerous applications in healthcare..."
+      }
+    ],
+    "extract_mode": "conversations"
+  }'
+```
+
+```python Python
+import requests
+
+url = "https://api.memsync.ai/integrations/chat"
+headers = {
+    "Authorization": "Bearer YOUR_JWT_TOKEN",
+    "Content-Type": "application/json"
+}
+
+data = {
+    "platform": "chatgpt",
+    "chat_data": [
+        {
+            "timestamp": "2024-01-15T14:30:00Z",
+            "role": "user", 
+            "content": "Tell me about machine learning applications in healthcare"
+        },
+        {
+            "timestamp": "2024-01-15T14:30:15Z",
+            "role": "assistant",
+            "content": "Machine learning has numerous applications in healthcare..."
+        }
+    ],
+    "extract_mode": "conversations"
+}
+
+response = requests.post(url, headers=headers, json=data)
+result = response.json()
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.memsync.ai/integrations/chat', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_JWT_TOKEN',
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    platform: 'chatgpt',
+    chat_data: [
+      {
+        timestamp: '2024-01-15T14:30:00Z',
+        role: 'user',
+        content: 'Tell me about machine learning applications in healthcare'
+      },
+      {
+        timestamp: '2024-01-15T14:30:15Z',
+        role: 'assistant', 
+        content: 'Machine learning has numerous applications in healthcare...'
+      }
+    ],
+    extract_mode: 'conversations'
+  }),
+});
+
+const result = await response.json();
+```
+
+</RequestExample>
+
+## Request Body
+
+<ParamField body="platform" type="string" required>
+  Chat platform source. Supported: `chatgpt`, `claude`, `telegram`, `whatsapp`, `slack`, `discord`
+</ParamField>
+
+<ParamField body="chat_data" type="array" required>
+  Array of chat messages
+  
+  <Expandable title="Message Properties">
+    <ParamField body="timestamp" type="string" required>
+      ISO 8601 timestamp of the message
+    </ParamField>
+    <ParamField body="role" type="string" required>
+      Message role: `user`, `assistant`, `system`, or participant name
+    </ParamField>
+    <ParamField body="content" type="string" required>
+      Message content/text
+    </ParamField>
+    <ParamField body="message_id" type="string">
+      Unique identifier for the message
+    </ParamField>
+    <ParamField body="metadata" type="object">
+      Additional message metadata
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="extract_mode" type="string" default="conversations">
+  Extraction strategy. Options: `conversations`, `insights`, `topics`, `all`
+</ParamField>
+
+<ParamField body="conversation_settings" type="object">
+  Settings for conversation processing
+  
+  <Expandable title="Conversation Settings">
+    <ParamField body="min_length" type="number" default="50">
+      Minimum message length to consider
+    </ParamField>
+    <ParamField body="group_by_topic" type="boolean" default="true">
+      Whether to group related messages by topic
+    </ParamField>
+    <ParamField body="include_system_messages" type="boolean" default="false">
+      Whether to include system messages
+    </ParamField>
+    <ParamField body="time_gap_threshold" type="number" default="3600">
+      Seconds gap to separate conversations
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="auto_categorize" type="boolean" default="true">
+  Whether to automatically categorize extracted memories
+</ParamField>
+
+## Response
+
+<ResponseField name="integration_id" type="string">
+  Unique identifier for the chat integration
+</ResponseField>
+
+<ResponseField name="platform" type="string">
+  Chat platform that was processed
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  Processing status: `processing`, `completed`, `error`
+</ResponseField>
+
+<ResponseField name="processing_stats" type="object">
+  Statistics about the processing
+  
+  <Expandable title="Processing Statistics">
+    <ResponseField name="total_messages" type="number">
+      Total number of messages processed
+    </ResponseField>
+    <ResponseField name="conversations_identified" type="number">
+      Number of distinct conversations found
+    </ResponseField>
+    <ResponseField name="memories_extracted" type="number">
+      Number of memories created
+    </ResponseField>
+    <ResponseField name="topics_detected" type="array">
+      Main topics identified in conversations
+    </ResponseField>
+    <ResponseField name="date_range" type="object">
+      Date range of the chat history
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="memories" type="array">
+  List of extracted memories
+  
+  <Expandable title="Memory Properties">
+    <ResponseField name="memory_id" type="string">
+      Unique identifier for the memory
+    </ResponseField>
+    <ResponseField name="content" type="string">
+      Extracted conversation content
+    </ResponseField>
+    <ResponseField name="category" type="string">
+      Assigned category
+    </ResponseField>
+    <ResponseField name="conversation_topic" type="string">
+      Main topic of the conversation
+    </ResponseField>
+    <ResponseField name="participants" type="array">
+      Participants in the conversation
+    </ResponseField>
+    <ResponseField name="start_time" type="string">
+      When the conversation started
+    </ResponseField>
+    <ResponseField name="end_time" type="string">
+      When the conversation ended
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseExample>
+
+```json Response
+{
+  "integration_id": "chat_int_789abc",
+  "platform": "chatgpt",
+  "status": "completed",
+  "processing_stats": {
+    "total_messages": 24,
+    "conversations_identified": 3,
+    "memories_extracted": 5,
+    "topics_detected": [
+      "Machine Learning in Healthcare",
+      "Python Programming",
+      "Career Development"
+    ],
+    "date_range": {
+      "start": "2024-01-10T09:00:00Z",
+      "end": "2024-01-15T17:30:00Z"
+    }
+  },
+  "memories": [
+    {
+      "memory_id": "mem_chat_001",
+      "content": "Discussed machine learning applications in medical diagnosis, specifically how neural networks can improve accuracy in identifying diseases from medical imaging. Learned about specific techniques and real-world implementations.",
+      "category": "learning",
+      "conversation_topic": "Machine Learning in Healthcare",
+      "participants": ["user", "assistant"],
+      "start_time": "2024-01-15T14:30:00Z",
+      "end_time": "2024-01-15T14:45:00Z"
+    }
+  ]
+}
+```
+
+</ResponseExample>
+
+## Extraction Modes
+
+<Accordion title="Conversations">
+  Groups related messages into conversation memories, preserving context and flow.
+</Accordion>
+
+<Accordion title="Insights">
+  Extracts key insights, learnings, and important information from conversations.
+</Accordion>
+
+<Accordion title="Topics">
+  Creates memories organized by topics discussed across conversations.
+</Accordion>
+
+<Accordion title="All">
+  Combines all extraction modes for comprehensive memory creation.
+</Accordion>
+
+## Supported Platforms
+
+<Accordion title="ChatGPT">
+  - Export conversations from ChatGPT
+  - Identifies learning topics and insights
+  - Categories: primarily `learning`, `productivity`
+</Accordion>
+
+<Accordion title="Claude">
+  - Claude conversation exports
+  - Focus on analytical discussions
+  - Categories: `learning`, `productivity`, `interests`
+</Accordion>
+
+<Accordion title="Telegram/WhatsApp">
+  - Personal and group conversations
+  - Relationship and social memories
+  - Categories: `relationships`, `interests`, `travel`
+</Accordion>
+
+<Accordion title="Slack/Discord">
+  - Professional and community discussions
+  - Work-related and interest-based memories
+  - Categories: `career`, `relationships`, `interests`
+</Accordion>
+
+## Privacy and Security
+
+- **Data Processing**: Chat data is processed securely and not stored permanently
+- **Participant Privacy**: Names and identifiers can be anonymized
+- **Content Filtering**: Sensitive content is automatically filtered out
+- **Retention**: Original chat data is deleted after processing 

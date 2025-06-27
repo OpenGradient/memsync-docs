@@ -1,0 +1,494 @@
+---
+title: "Search Memories"
+api: "POST https://api.memsync.ai/v1/memories/search"
+description: "Find relevant memories using semantic search"
+---
+
+Search for relevant memories using natural language queries. MemSync uses semantic search with vector embeddings to find memories that match the meaning and context of your query, not just keywords.
+
+## Authentication
+
+<ParamField header="Authorization" type="string" required>
+  Bearer JWT token for user authentication
+</ParamField>
+
+## Request Body
+
+<ParamField body="query" type="string" required>
+  Natural language search query (e.g., "What does the user do for work?")
+</ParamField>
+
+<ParamField body="limit" type="integer" default="10">
+  Maximum number of memories to return (1-100)
+</ParamField>
+
+<ParamField body="categories" type="array">
+  Filter results to specific memory categories
+  
+  <Expandable title="Available Categories">
+    - `identity` - Personal information and background
+    - `career` - Work, profession, and career goals
+    - `interests` - Hobbies and recreational activities
+    - `relationships` - Social connections and family
+    - `health` - Wellness, fitness, and medical information
+    - `finance` - Financial goals, budgets, and investments
+    - `learning` - Education, skills, and knowledge acquisition
+    - `travel` - Travel experiences and plans
+    - `productivity` - Work habits and organizational systems
+    - `private` - Sensitive personal information
+  </Expandable>
+</ParamField>
+
+<ParamField body="rerank" type="boolean" default="false">
+  Enable reranking for improved search quality (recommended for complex queries)
+</ParamField>
+
+<ParamField body="include_bio" type="boolean" default="true">
+  Include user bio in the response
+</ParamField>
+
+<ParamField body="agent_id" type="string">
+  Filter results to memories from a specific agent
+</ParamField>
+
+<ParamField body="thread_id" type="string">
+  Filter results to memories from a specific conversation thread
+</ParamField>
+
+## Response
+
+<ResponseField name="user_bio" type="string">
+  Auto-generated biographical summary of the user
+</ResponseField>
+
+<ResponseField name="memories" type="array">
+  Array of relevant memories matching the search query
+  
+  <Expandable title="Memory Object">
+    <ResponseField name="id" type="string">
+      Unique identifier for the memory
+    </ResponseField>
+    
+    <ResponseField name="memory" type="string">
+      The extracted memory content
+    </ResponseField>
+    
+    <ResponseField name="categories" type="array">
+      Categories assigned to this memory
+    </ResponseField>
+    
+    <ResponseField name="type" type="string">
+      Memory type: "semantic" (lasting facts) or "episodic" (time-bound events)
+    </ResponseField>
+    
+    <ResponseField name="vector_distance" type="number">
+      Semantic similarity score (lower = more similar, 0.0-1.0)
+    </ResponseField>
+    
+    <ResponseField name="rerank_score" type="number">
+      Reranking relevance score when reranking is enabled (higher = more relevant, 0.0-1.0)
+    </ResponseField>
+    
+    <ResponseField name="source" type="string">
+      Source of the memory (e.g., "chat", "integration")
+    </ResponseField>
+    
+    <ResponseField name="created_at" type="string">
+      ISO 8601 timestamp when the memory was created
+    </ResponseField>
+    
+    <ResponseField name="updated_at" type="string">
+      ISO 8601 timestamp when the memory was last updated
+    </ResponseField>
+    
+    <ResponseField name="agent_id" type="string">
+      Identifier of the agent that created this memory
+    </ResponseField>
+    
+    <ResponseField name="thread_id" type="string">
+      Conversation thread where this memory originated
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl -X POST "https://api.memsync.ai/v1/memories/search" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "What does the user do for work?",
+    "limit": 5,
+    "categories": ["career"],
+    "rerank": true
+  }'
+```
+
+```python Python
+import requests
+
+headers = {
+    "Authorization": "Bearer YOUR_JWT_TOKEN",
+    "Content-Type": "application/json"
+}
+
+data = {
+    "query": "What does the user do for work?",
+    "limit": 5,
+    "categories": ["career"],
+    "rerank": True
+}
+
+response = requests.post("https://api.memsync.ai/v1/memories/search",
+                        headers=headers, json=data)
+result = response.json()
+
+print(f"User Bio: {result['user_bio']}")
+for memory in result['memories']:
+    print(f"- {memory['memory']} (relevance: {memory['vector_distance']:.2f})")
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.memsync.ai/v1/memories/search', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_JWT_TOKEN',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    query: "What does the user do for work?",
+    limit: 5,
+    categories: ["career"],
+    rerank: true
+  })
+});
+
+const result = await response.json();
+console.log("User Bio:", result.user_bio);
+result.memories.forEach(memory => {
+  console.log(`- ${memory.memory} (relevance: ${memory.vector_distance.toFixed(2)})`);
+});
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json Success Response
+{
+  "user_bio": "Senior Software Engineer at Google specializing in machine learning infrastructure with 8+ years of experience. Passionate about hiking, photography, and sustainable living.",
+  "memories": [
+    {
+      "id": "mem_abc123",
+      "memory": "Works as a Senior Software Engineer at Google on ML infrastructure team",
+      "categories": ["career"],
+      "type": "semantic",
+      "vector_distance": 0.15,
+      "rerank_score": 0.95,
+      "source": "chat",
+      "created_at": "2024-03-20T10:00:00Z",
+      "updated_at": "2024-03-20T10:00:00Z",
+      "agent_id": "career-advisor-bot",
+      "thread_id": "conversation-2024-001"
+    },
+    {
+      "id": "mem_def456",
+      "memory": "Recently promoted to Senior Software Engineer, leads team of 5 engineers",
+      "categories": ["career"],
+      "type": "episodic",
+      "vector_distance": 0.22,
+      "rerank_score": 0.88,
+      "source": "chat",
+      "created_at": "2024-03-20T09:30:00Z", 
+      "updated_at": "2024-03-20T09:30:00Z",
+      "agent_id": "career-advisor-bot",
+      "thread_id": "conversation-2024-001"
+    },
+    {
+      "id": "mem_ghi789",
+      "memory": "Has 8+ years of experience in software engineering",
+      "categories": ["career"],
+      "type": "semantic",
+      "vector_distance": 0.28,
+      "rerank_score": 0.82,
+      "source": "integration",
+      "created_at": "2024-03-19T15:20:00Z",
+      "updated_at": "2024-03-19T15:20:00Z",
+      "agent_id": "linkedin-integration",
+      "thread_id": "integration-linkedin-001"
+    }
+  ]
+}
+```
+
+```json Error Response
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid request format",
+    "details": {
+      "field": "limit",
+      "reason": "Must be between 1 and 100"
+    }
+  },
+  "status": "error",
+  "timestamp": "2024-03-20T10:00:00Z"
+}
+```
+
+</ResponseExample>
+
+## Query Examples
+
+### Basic Queries
+
+<CodeGroup>
+
+```python Work Information
+# Find career and work-related information
+response = requests.post(url, headers=headers, json={
+    "query": "What does the user do for work?",
+    "categories": ["career"],
+    "limit": 10
+})
+```
+
+```python Personal Interests
+# Find hobbies and interests
+response = requests.post(url, headers=headers, json={
+    "query": "What are the user's hobbies and interests?",
+    "categories": ["interests"],
+    "limit": 8
+})
+```
+
+```python Current Projects
+# Find current activities and projects
+response = requests.post(url, headers=headers, json={
+    "query": "What is the user currently working on?",
+    "categories": ["career", "learning"],
+    "rerank": True,
+    "limit": 5
+})
+```
+
+```python Comprehensive Overview
+# Get broad understanding of the user
+response = requests.post(url, headers=headers, json={
+    "query": "Tell me about this user",
+    "rerank": True,
+    "limit": 15
+})
+```
+
+</CodeGroup>
+
+### Advanced Queries
+
+<CodeGroup>
+
+```python Contextual Search
+# Search with conversation context
+response = requests.post(url, headers=headers, json={
+    "query": "What would help the user with their career goals?",
+    "categories": ["career", "learning"],
+    "rerank": True,
+    "limit": 10
+})
+```
+
+```python Preference Queries
+# Find preferences and dislikes
+response = requests.post(url, headers=headers, json={
+    "query": "What does the user like and dislike?",
+    "categories": ["interests", "productivity"],
+    "limit": 12
+})
+```
+
+```python Relationship Context
+# Find social and relationship information
+response = requests.post(url, headers=headers, json={
+    "query": "Who is important to the user?",
+    "categories": ["relationships"],
+    "limit": 8
+})
+```
+
+</CodeGroup>
+
+## Understanding Search Results
+
+### Vector Distance
+
+The `vector_distance` indicates semantic similarity:
+- **0.0-0.3**: Highly relevant and closely related
+- **0.3-0.6**: Moderately relevant  
+- **0.6-1.0**: Less relevant, may be tangentially related
+
+### Rerank Score
+
+When `rerank: true` is enabled, the `rerank_score` provides enhanced relevance:
+- **0.8-1.0**: Excellent match for the query
+- **0.6-0.8**: Good match with clear relevance
+- **0.4-0.6**: Fair match, some relevance
+- **0.0-0.4**: Weak match, limited relevance
+
+### Result Ordering
+
+Results are ordered by relevance:
+1. **With reranking**: Ordered by `rerank_score` (descending)
+2. **Without reranking**: Ordered by `vector_distance` (ascending)
+
+## Best Practices
+
+### Query Optimization
+
+<AccordionGroup>
+  <Accordion title="Use Natural Language">
+    Write queries as natural questions rather than keywords
+    
+    ```python
+    # ✅ Good
+    "What technical skills does the user have?"
+    
+    # ❌ Less effective  
+    "skills technical programming"
+    ```
+  </Accordion>
+
+  <Accordion title="Be Specific">
+    Specific queries often yield better results than generic ones
+    
+    ```python
+    # ✅ Better
+    "What programming languages is the user learning?"
+    
+    # ❌ Too generic
+    "user learning"
+    ```
+  </Accordion>
+
+  <Accordion title="Use Categories">
+    Filter by categories for more targeted results
+    
+    ```python
+    # For work-related queries
+    {"query": "user responsibilities", "categories": ["career"]}
+    
+    # For personal interests
+    {"query": "user hobbies", "categories": ["interests"]}
+    ```
+  </Accordion>
+
+  <Accordion title="Enable Reranking">
+    Use reranking for complex or important queries
+    
+    ```python
+    # For nuanced queries
+    {
+        "query": "How does the user balance work and personal life?",
+        "rerank": True,
+        "categories": ["career", "health", "relationships"]
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Performance Tips
+
+- **Appropriate Limits**: Use reasonable limits (5-15 for most use cases)
+- **Category Filtering**: Reduce search space with relevant categories
+- **Caching**: Cache frequent queries to improve response times
+- **Batch Processing**: Group related searches when possible
+
+## Common Use Cases
+
+### Personalized Responses
+
+```python
+def get_context_for_response(user_message):
+    context_search = {
+        "query": f"What's relevant to helping with: {user_message}",
+        "limit": 8,
+        "rerank": True
+    }
+    
+    response = requests.post(search_url, headers=headers, json=context_search)
+    memories = response.json()['memories']
+    
+    return [m['memory'] for m in memories]
+```
+
+### User Analysis
+
+```python
+def analyze_user_interests():
+    searches = [
+        {"query": "What is the user passionate about?", "categories": ["interests"]},
+        {"query": "What is the user learning?", "categories": ["learning"]},
+        {"query": "What are the user's goals?", "categories": ["career", "health"]}
+    ]
+    
+    analysis = {}
+    for search in searches:
+        response = requests.post(search_url, headers=headers, json=search)
+        analysis[search['query']] = response.json()['memories']
+    
+    return analysis
+```
+
+### Content Recommendations
+
+```python
+def get_content_recommendations():
+    interests_search = {
+        "query": "What topics interest the user?",
+        "categories": ["interests", "learning"],
+        "limit": 10
+    }
+    
+    response = requests.post(search_url, headers=headers, json=interests_search)
+    memories = response.json()['memories']
+    
+    # Extract topics for content recommendation
+    topics = extract_topics_from_memories(memories)
+    return generate_content_suggestions(topics)
+```
+
+## Rate Limiting
+
+Search endpoints have enhanced rate limiting:
+- **50 requests per minute** per authenticated user
+- Complex queries with reranking may take slightly longer
+- Consider implementing client-side caching for frequent queries
+
+## Error Codes
+
+| Error Code | Description |
+|------------|-------------|
+| `VALIDATION_ERROR` | Invalid request format or parameters |
+| `AUTHENTICATION_ERROR` | Invalid or missing JWT token |
+| `RATE_LIMIT_EXCEEDED` | Too many search requests |
+| `NO_MEMORIES_FOUND` | No memories exist for the user |
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Store Memories" icon="plus" href="/api-reference/endpoint/store-memories">
+    Learn how to add memories to search from
+  </Card>
+  
+  <Card title="User Profiles" icon="user" href="/api-reference/endpoint/get-profile">
+    Get comprehensive user profiles and insights
+  </Card>
+  
+  <Card title="Memory Categories" icon="tags" href="/essentials/categories">
+    Understand how to use categories effectively
+  </Card>
+  
+  <Card title="Search Best Practices" icon="lightbulb" href="/essentials/search">
+    Learn advanced search techniques and strategies
+  </Card>
+</CardGroup> 

@@ -1,0 +1,94 @@
+---
+title: "Create API Key"
+api: "POST /api-keys"
+description: "Create a new API key for programmatic access"
+---
+
+Creates a new API key for accessing MemSync APIs programmatically.
+
+<RequestExample>
+
+```bash cURL
+curl -X POST 'https://api.memsync.ai/api-keys' \
+  -H 'Authorization: Bearer YOUR_JWT_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Production API Key",
+    "scopes": ["memories:read", "memories:write", "profile:read"],
+    "expires_in": 2592000
+  }'
+```
+
+```python Python
+import requests
+
+data = {
+    "name": "Production API Key",
+    "scopes": ["memories:read", "memories:write", "profile:read"],
+    "expires_in": 2592000
+}
+
+response = requests.post(
+    "https://api.memsync.ai/api-keys",
+    headers={"Authorization": "Bearer YOUR_JWT_TOKEN"},
+    json=data
+)
+api_key = response.json()
+```
+
+</RequestExample>
+
+## Request Body
+
+<ParamField body="name" type="string" required>
+  Human-readable name for the API key
+</ParamField>
+
+<ParamField body="scopes" type="array">
+  List of permission scopes for the API key
+</ParamField>
+
+<ParamField body="expires_in" type="number">
+  Expiration time in seconds (max: 1 year)
+</ParamField>
+
+## Response
+
+<ResponseField name="api_key_id" type="string">
+  Unique identifier for the API key
+</ResponseField>
+
+<ResponseField name="key" type="string">
+  The actual API key (only shown once)
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  Name of the API key
+</ResponseField>
+
+<ResponseField name="scopes" type="array">
+  Granted permission scopes
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  When the API key was created
+</ResponseField>
+
+<ResponseField name="expires_at" type="string">
+  When the API key expires
+</ResponseField>
+
+<ResponseExample>
+
+```json Response
+{
+  "api_key_id": "key_123abc",
+  "key": "memsync_sk_live_abc123def456...",
+  "name": "Production API Key",
+  "scopes": ["memories:read", "memories:write", "profile:read"],
+  "created_at": "2024-01-15T16:30:00Z",
+  "expires_at": "2024-02-14T16:30:00Z"
+}
+```
+
+</ResponseExample> 

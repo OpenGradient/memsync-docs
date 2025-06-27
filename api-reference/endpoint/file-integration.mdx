@@ -1,0 +1,275 @@
+---
+title: "File Integration"
+api: "POST /integrations/files"
+description: "Upload and process documents to extract memories"
+---
+
+Upload documents to automatically extract and store memories from their content.
+
+<RequestExample>
+
+```bash cURL
+curl -X POST 'https://api.memsync.ai/integrations/files' \
+  -H 'Authorization: Bearer YOUR_JWT_TOKEN' \
+  -F 'file=@document.pdf' \
+  -F 'category=learning' \
+  -F 'extract_mode=comprehensive'
+```
+
+```python Python
+import requests
+
+url = "https://api.memsync.ai/integrations/files"
+headers = {
+    "Authorization": "Bearer YOUR_JWT_TOKEN"
+}
+
+files = {
+    'file': open('document.pdf', 'rb')
+}
+
+data = {
+    'category': 'learning',
+    'extract_mode': 'comprehensive'
+}
+
+response = requests.post(url, headers=headers, files=files, data=data)
+result = response.json()
+```
+
+```javascript JavaScript
+const formData = new FormData();
+formData.append('file', fileInput.files[0]);
+formData.append('category', 'learning');
+formData.append('extract_mode', 'comprehensive');
+
+const response = await fetch('https://api.memsync.ai/integrations/files', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_JWT_TOKEN',
+  },
+  body: formData,
+});
+
+const result = await response.json();
+```
+
+</RequestExample>
+
+## Request Parameters
+
+<ParamField body="file" type="file" required>
+  Document file to process. Supported formats: PDF, DOCX, TXT, MD, HTML
+</ParamField>
+
+<ParamField body="category" type="string">
+  Default category for extracted memories. One of: `identity`, `career`, `interests`, `relationships`, `health`, `finance`, `learning`, `travel`, `productivity`, `private`
+</ParamField>
+
+<ParamField body="extract_mode" type="string" default="smart">
+  Extraction strategy. Options: `comprehensive`, `smart`, `highlights`, `summary`
+</ParamField>
+
+<ParamField body="chunk_size" type="number" default="1000">
+  Maximum size of text chunks for processing (characters)
+</ParamField>
+
+<ParamField body="overlap" type="number" default="200">
+  Overlap between chunks to maintain context
+</ParamField>
+
+<ParamField body="auto_categorize" type="boolean" default="true">
+  Whether to automatically categorize extracted memories
+</ParamField>
+
+<ParamField body="metadata" type="object">
+  Additional metadata for the document
+  
+  <Expandable title="Metadata Properties">
+    <ParamField body="title" type="string">
+      Document title
+    </ParamField>
+    <ParamField body="author" type="string">
+      Document author
+    </ParamField>
+    <ParamField body="source" type="string">
+      Source or origin of the document
+    </ParamField>
+    <ParamField body="tags" type="array">
+      Custom tags for the document
+    </ParamField>
+    <ParamField body="date_created" type="string">
+      When the document was created
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+## Response
+
+<ResponseField name="integration_id" type="string">
+  Unique identifier for the file integration
+</ResponseField>
+
+<ResponseField name="filename" type="string">
+  Name of the uploaded file
+</ResponseField>
+
+<ResponseField name="file_size" type="number">
+  Size of the uploaded file in bytes
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  Processing status: `uploaded`, `processing`, `completed`, `error`
+</ResponseField>
+
+<ResponseField name="extraction_stats" type="object">
+  Statistics about the extraction process
+  
+  <Expandable title="Extraction Statistics">
+    <ResponseField name="total_pages" type="number">
+      Number of pages in the document
+    </ResponseField>
+    <ResponseField name="text_length" type="number">
+      Total characters extracted
+    </ResponseField>
+    <ResponseField name="chunks_created" type="number">
+      Number of text chunks created
+    </ResponseField>
+    <ResponseField name="memories_extracted" type="number">
+      Number of memories extracted
+    </ResponseField>
+    <ResponseField name="categories_detected" type="array">
+      Categories detected in the content
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="memories" type="array">
+  List of extracted memories (if processing is complete)
+  
+  <Expandable title="Memory Properties">
+    <ResponseField name="memory_id" type="string">
+      Unique identifier for the extracted memory
+    </ResponseField>
+    <ResponseField name="content" type="string">
+      Extracted text content
+    </ResponseField>
+    <ResponseField name="category" type="string">
+      Assigned category
+    </ResponseField>
+    <ResponseField name="importance" type="number">
+      Calculated importance score
+    </ResponseField>
+    <ResponseField name="page_number" type="number">
+      Source page number in document
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  ISO 8601 timestamp when upload was initiated
+</ResponseField>
+
+<ResponseField name="completed_at" type="string">
+  ISO 8601 timestamp when processing completed
+</ResponseField>
+
+<ResponseExample>
+
+```json Response
+{
+  "integration_id": "file_int_456def",
+  "filename": "research_paper.pdf",
+  "file_size": 2458697,
+  "status": "completed",
+  "extraction_stats": {
+    "total_pages": 15,
+    "text_length": 45678,
+    "chunks_created": 23,
+    "memories_extracted": 12,
+    "categories_detected": ["learning", "career", "interests"]
+  },
+  "memories": [
+    {
+      "memory_id": "mem_789ghi",
+      "content": "The study demonstrates that machine learning algorithms can improve medical diagnosis accuracy by 23% when trained on diverse datasets.",
+      "category": "learning",
+      "importance": 0.87,
+      "page_number": 3
+    }
+  ],
+  "created_at": "2024-01-15T16:30:00Z",
+  "completed_at": "2024-01-15T16:32:15Z"
+}
+```
+
+</ResponseExample>
+
+## Extraction Modes
+
+<Accordion title="Comprehensive">
+  Extracts memories from all significant text passages, creating detailed memories for each section.
+</Accordion>
+
+<Accordion title="Smart">
+  Uses AI to identify the most important passages and concepts, creating focused memories.
+</Accordion>
+
+<Accordion title="Highlights">
+  Extracts only key insights, findings, and actionable information.
+</Accordion>
+
+<Accordion title="Summary">
+  Creates a single comprehensive memory summarizing the entire document.
+</Accordion>
+
+## Supported File Types
+
+<Accordion title="PDF">
+  - Text extraction from standard PDFs
+  - OCR for scanned documents
+  - Preserves page structure and formatting
+</Accordion>
+
+<Accordion title="Word Documents (DOCX)">
+  - Full text extraction
+  - Maintains document structure
+  - Extracts embedded content
+</Accordion>
+
+<Accordion title="Text Files (TXT, MD)">
+  - Direct text processing
+  - Markdown formatting recognition
+  - Fast processing
+</Accordion>
+
+<Accordion title="Web Pages (HTML)">
+  - Content extraction from HTML
+  - Removes navigation and ads
+  - Focuses on main content
+</Accordion>
+
+## Error Responses
+
+<ResponseField name="400" type="object">
+  Invalid file or parameters
+  ```json
+  {
+    "error": "Unsupported file type",
+    "code": "INVALID_FILE_TYPE",
+    "supported_types": ["pdf", "docx", "txt", "md", "html"]
+  }
+  ```
+</ResponseField>
+
+<ResponseField name="413" type="object">
+  File too large
+  ```json
+  {
+    "error": "File size exceeds limit",
+    "code": "FILE_TOO_LARGE",
+    "max_size_mb": 50,
+    "file_size_mb": 75
+  }
+  ```
+</ResponseField> 

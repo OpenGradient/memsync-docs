@@ -1,0 +1,508 @@
+---
+title: 'User Profiles'
+description: 'Understanding MemSync auto-generated user profiles and insights'
+---
+
+# User Profiles
+
+MemSync automatically generates comprehensive user profiles from accumulated memories, providing rich context about users without manual curation. These profiles include biographical summaries, categorized insights, and derived personality traits.
+
+## What are User Profiles?
+
+User profiles in MemSync are auto-generated summaries that synthesize memories into meaningful insights about users. They're designed to provide AI applications with deep user understanding while maintaining privacy and accuracy.
+
+### Profile Components
+
+<CardGroup cols={2}>
+  <Card title="User Bio" icon="user">
+    A concise biographical summary highlighting the most important aspects of the user
+  </Card>
+  
+  <Card title="Category Profiles" icon="folder">
+    Detailed profiles for each memory category (career, interests, relationships, etc.)
+  </Card>
+  
+  <Card title="Insights" icon="lightbulb">
+    Extracted patterns, preferences, and behavioral insights from user interactions
+  </Card>
+  
+  <Card title="Derived Traits" icon="brain">
+    Personality traits and characteristics inferred from user behavior and preferences
+  </Card>
+</CardGroup>
+
+## User Bio
+
+The user bio is a high-level summary designed to give AI applications quick context about who the user is.
+
+### Bio Characteristics
+
+- **Concise**: Typically 2-4 sentences
+- **Information-dense**: Combines related facts efficiently
+- **Readable**: Written in natural language, not bullet points
+- **Dynamic**: Updates automatically as new memories are added
+- **Prioritized**: Focuses on most important and stable information
+
+### Example Bio
+
+```json
+{
+  "user_bio": "Software engineer at Google specializing in machine learning infrastructure with 8 years of experience. Passionate about hiking, photography, and sustainable living. Currently learning Spanish and training for a marathon while working on a side project in AI ethics."
+}
+```
+
+### Bio Generation Process
+
+<Steps>
+  <Step title="Memory Analysis">
+    MemSync analyzes all user memories to identify key themes and patterns
+  </Step>
+  
+  <Step title="Information Prioritization">
+    The system prioritizes information based on importance, frequency, and recency
+  </Step>
+  
+  <Step title="Synthesis">
+    Related information is combined into coherent, natural-sounding sentences
+  </Step>
+  
+  <Step title="Validation">
+    The bio is validated for accuracy and relevance before storage
+  </Step>
+</Steps>
+
+## Category Profiles
+
+MemSync generates detailed profiles for each memory category, providing deep insights into specific aspects of the user's life.
+
+### Available Category Profiles
+
+<AccordionGroup>
+  <Accordion title="Identity Profile">
+    Core personal information and self-identification
+    
+    ```json
+    {
+      "identity": "29-year-old software engineer living in San Francisco, originally from Chicago. Identifies as a lifelong learner and problem-solver. Values authenticity and continuous growth."
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Career Profile">
+    Professional background, skills, and career trajectory
+    
+    ```json
+    {
+      "career": "Senior Software Engineer at Google with 8+ years experience in ML infrastructure. Expert in Python, distributed systems, and model deployment. Mentors junior developers and leads cross-functional projects."
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Interests Profile">
+    Hobbies, passions, and recreational activities
+    
+    ```json
+    {
+      "interests": "Avid hiker and photographer who enjoys exploring national parks. Practices sustainable living and urban gardening. Recently started learning guitar and cooking Mediterranean cuisine."
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Relationships Profile">
+    Social connections and relationship patterns
+    
+    ```json
+    {
+      "relationships": "Married to college sweetheart Sarah for 5 years. Maintains close friendships from university and work. Actively mentors junior colleagues and values collaborative teamwork."
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Health Profile">
+    Wellness practices and health-related information
+    
+    ```json
+    {
+      "health": "Maintains active lifestyle through running and hiking. Follows primarily plant-based diet for health and environmental reasons. Prioritizes mental health through meditation and work-life balance."
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Insights
+
+MemSync extracts behavioral patterns and preferences from user interactions, providing deeper understanding of user motivations and tendencies.
+
+### Insight Categories
+
+<CardGroup cols={2}>
+  <Card title="Common Topics" icon="message">
+    Frequently discussed subjects and interests
+  </Card>
+  
+  <Card title="Communication Tone" icon="volume">
+    Preferred communication style and tone
+  </Card>
+  
+  <Card title="Interests" icon="star">
+    Core interests and passionate subjects
+  </Card>
+  
+  <Card title="Likes & Dislikes" icon="thumbs-up">
+    Preferences and aversions across different areas
+  </Card>
+</CardGroup>
+
+### Example Insights
+
+```json
+{
+  "insights": {
+    "identity": {
+      "insights": {
+        "common_topics": ["technology", "career growth", "outdoor activities", "sustainability"],
+        "communication_tone": "thoughtful and analytical, prefers detailed explanations",
+        "interests": ["machine learning", "hiking", "photography", "environmental issues"],
+        "likes": ["challenging problems", "collaborative work", "nature", "learning new skills"],
+        "dislikes": ["micromanagement", "repetitive tasks", "waste", "rushed decisions"]
+      },
+      "derived_traits": ["analytical", "environmentally conscious", "growth-minded", "collaborative"]
+    }
+  }
+}
+```
+
+## Derived Traits
+
+MemSync infers personality traits and characteristics from user behavior patterns, providing insights into user psychology and preferences.
+
+### Trait Categories
+
+<AccordionGroup>
+  <Accordion title="Personality Traits">
+    Core personality characteristics inferred from behavior
+    
+    ```json
+    {
+      "traits": ["analytical", "conscientious", "open-minded", "collaborative", "goal-oriented"]
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Work Style">
+    Professional behavior and work preferences
+    
+    ```json
+    {
+      "work_style": ["detail-oriented", "systems-thinking", "mentorship-focused", "innovation-driven"]
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Communication Style">
+    How the user prefers to communicate and receive information
+    
+    ```json
+    {
+      "communication": ["direct", "thoughtful", "evidence-based", "collaborative"]
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Values">
+    Core values and principles that guide behavior
+    
+    ```json
+    {
+      "values": ["continuous learning", "environmental sustainability", "authenticity", "teamwork"]
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Using Profiles in Applications
+
+### Basic Profile Retrieval
+
+```python
+import requests
+
+# Get complete user profile
+response = requests.get("https://api.memsync.ai/v1/users/profile",
+    headers={"Authorization": "Bearer YOUR_TOKEN"}
+)
+
+profile = response.json()
+print(f"Bio: {profile['user_bio']}")
+print(f"Career: {profile['profiles']['career']}")
+print(f"Interests: {profile['profiles']['interests']}")
+```
+
+### Profile-Based Personalization
+
+```python
+def personalize_content(user_profile):
+    bio = user_profile['user_bio']
+    insights = user_profile['insights']['identity']['insights']
+    
+    # Extract key information
+    interests = insights['interests']
+    communication_tone = insights['communication_tone']
+    likes = insights['likes']
+    
+    # Customize content based on profile
+    if 'analytical' in communication_tone:
+        response_style = "detailed and data-driven"
+    else:
+        response_style = "concise and practical"
+    
+    return {
+        'content_topics': interests,
+        'response_style': response_style,
+        'engagement_triggers': likes
+    }
+```
+
+### Dynamic Profile Updates
+
+```python
+def check_profile_freshness(user_id):
+    # Get current profile
+    profile = get_user_profile(user_id)
+    
+    # Get recent memories
+    recent_memories = get_recent_memories(user_id, days=7)
+    
+    # Check if profile should be updated
+    if should_update_profile(profile, recent_memories):
+        # Trigger profile regeneration
+        trigger_profile_update(user_id)
+```
+
+## Profile Quality and Accuracy
+
+### Quality Indicators
+
+<AccordionGroup>
+  <Accordion title="Memory Coverage">
+    Profiles are more accurate with diverse memory coverage across categories
+    
+    ```python
+    def assess_profile_coverage(memories):
+        categories = set(m.category for m in memories)
+        coverage_score = len(categories) / 10  # 10 total categories
+        return coverage_score
+    ```
+  </Accordion>
+
+  <Accordion title="Memory Recency">
+    Recent memories ensure profiles reflect current user state
+    
+    ```python
+    def assess_profile_freshness(memories):
+        recent_memories = [m for m in memories if days_since(m.created_at) < 30]
+        freshness_score = len(recent_memories) / len(memories)
+        return freshness_score
+    ```
+  </Accordion>
+
+  <Accordion title="Consistency">
+    Consistent information across memories improves profile reliability
+    
+    ```python
+    def assess_profile_consistency(memories):
+        # Check for conflicting information
+        conflicts = detect_memory_conflicts(memories)
+        consistency_score = 1 - (len(conflicts) / len(memories))
+        return consistency_score
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Improving Profile Quality
+
+<Steps>
+  <Step title="Encourage Diverse Conversations">
+    Ask users about different aspects of their lives to build comprehensive profiles
+  </Step>
+  
+  <Step title="Regular Updates">
+    Ensure conversations happen regularly to keep profiles current
+  </Step>
+  
+  <Step title="Depth Over Breadth">
+    Sometimes, encourage deeper discussions about specific topics
+  </Step>
+  
+  <Step title="Validate Information">
+    Occasionally confirm important details to ensure accuracy
+  </Step>
+</Steps>
+
+## Privacy and Control
+
+### Profile Visibility
+
+Users have control over their profile information:
+
+- **Bio Editing**: Users can manually edit their auto-generated bio
+- **Category Control**: Users can choose which categories to include in profiles
+- **Privacy Settings**: Sensitive information can be marked as private
+- **Data Export**: Users can export their complete profile data
+
+### Manual Bio Override
+
+```python
+# Allow users to override auto-generated bio
+def update_user_bio(user_id, custom_bio):
+    response = requests.put("https://api.memsync.ai/v1/users/bio",
+        headers={"Authorization": "Bearer YOUR_TOKEN"},
+        json={"user_bio": custom_bio}
+    )
+    return response.json()
+```
+
+## Profile Evolution
+
+### Tracking Changes Over Time
+
+```python
+def track_profile_evolution(user_id):
+    # Get historical profile snapshots
+    profiles = get_profile_history(user_id)
+    
+    # Analyze changes
+    changes = []
+    for i in range(1, len(profiles)):
+        prev_profile = profiles[i-1]
+        curr_profile = profiles[i]
+        
+        # Detect significant changes
+        if bio_changed_significantly(prev_profile, curr_profile):
+            changes.append({
+                'date': curr_profile['updated_at'],
+                'type': 'bio_update',
+                'description': 'Major life change detected'
+            })
+    
+    return changes
+```
+
+### Adaptation Patterns
+
+Common profile evolution patterns:
+
+- **Career Transitions**: Changes in professional profiles during job changes
+- **Life Events**: Updates following major life events (marriage, moving, etc.)
+- **Skill Development**: Learning profiles evolving as users acquire new skills
+- **Interest Shifts**: Interest profiles adapting to new hobbies and passions
+
+## Best Practices
+
+### For Developers
+
+<AccordionGroup>
+  <Accordion title="Profile Integration">
+    Integrate profiles naturally into your application flow
+    
+    ```python
+    def generate_response(user_message, user_id):
+        # Get user profile for context
+        profile = get_user_profile(user_id)
+        
+        # Use profile to inform response
+        context = f"User background: {profile['user_bio']}"
+        interests = profile['insights']['identity']['insights']['interests']
+        
+        # Generate personalized response
+        return create_contextual_response(user_message, context, interests)
+    ```
+  </Accordion>
+
+  <Accordion title="Profile Caching">
+    Cache profiles for better performance
+    
+    ```python
+    from functools import lru_cache
+    from datetime import datetime, timedelta
+    
+    @lru_cache(maxsize=1000)
+    def get_cached_profile(user_id, cache_key):
+        return get_user_profile(user_id)
+    
+    def get_profile_with_cache(user_id):
+        # Create cache key that expires daily
+        cache_key = datetime.now().strftime("%Y-%m-%d")
+        return get_cached_profile(user_id, cache_key)
+    ```
+  </Accordion>
+
+  <Accordion title="Graceful Degradation">
+    Handle cases where profiles are incomplete or unavailable
+    
+    ```python
+    def get_user_context(user_id):
+        try:
+            profile = get_user_profile(user_id)
+            return profile['user_bio']
+        except Exception:
+            # Fallback to basic memory search
+            memories = search_memories("user overview", user_id, limit=5)
+            return summarize_memories(memories)
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### For Applications
+
+<AccordionGroup>
+  <Accordion title="Contextual Usage">
+    Use profiles to provide contextual assistance
+    
+    ```python
+    def provide_recommendations(user_id, request_type):
+        profile = get_user_profile(user_id)
+        interests = profile['insights']['identity']['insights']['interests']
+        
+        if request_type == "learning":
+            return recommend_courses(interests)
+        elif request_type == "content":
+            return recommend_articles(interests)
+    ```
+  </Accordion>
+
+  <Accordion title="Personalization">
+    Tailor user experience based on profile insights
+    
+    ```python
+    def customize_interface(user_id):
+        profile = get_user_profile(user_id)
+        traits = profile['insights']['identity']['derived_traits']
+        
+        if 'analytical' in traits:
+            return show_detailed_interface()
+        else:
+            return show_simple_interface()
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Memory Types" icon="brain" href="/essentials/memory-types">
+    Learn how different memory types contribute to profile generation
+  </Card>
+  
+  <Card title="Search" icon="search" href="/essentials/search">
+    Use search to find specific aspects of user profiles
+  </Card>
+  
+  <Card title="Integrations" icon="plug" href="/essentials/integrations">
+    Import external data to enrich user profiles
+  </Card>
+  
+  <Card title="Profile API" icon="code" href="/api-reference/endpoint/get-profile">
+    Explore the complete profile API documentation
+  </Card>
+</CardGroup> 

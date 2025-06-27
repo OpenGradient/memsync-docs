@@ -1,0 +1,84 @@
+---
+title: "Delete API Key"
+api: "DELETE /api-keys/{api_key_id}"
+description: "Revoke and delete an API key"
+---
+
+Permanently revokes and deletes an API key, making it unusable for future requests.
+
+<Warning>
+This action is irreversible. Once an API key is deleted, it cannot be recovered.
+</Warning>
+
+<RequestExample>
+
+```bash cURL
+curl -X DELETE 'https://api.memsync.ai/api-keys/key_123abc' \
+  -H 'Authorization: Bearer YOUR_JWT_TOKEN'
+```
+
+```python Python
+import requests
+
+response = requests.delete(
+    "https://api.memsync.ai/api-keys/key_123abc",
+    headers={"Authorization": "Bearer YOUR_JWT_TOKEN"}
+)
+result = response.json()
+```
+
+</RequestExample>
+
+## Path Parameters
+
+<ParamField path="api_key_id" type="string" required>
+  The unique identifier of the API key to delete
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the deletion was successful
+</ResponseField>
+
+<ResponseField name="api_key_id" type="string">
+  ID of the deleted API key
+</ResponseField>
+
+<ResponseField name="deleted_at" type="string">
+  ISO 8601 timestamp when the API key was deleted
+</ResponseField>
+
+<ResponseExample>
+
+```json Response
+{
+  "success": true,
+  "api_key_id": "key_123abc",
+  "deleted_at": "2024-01-15T16:45:00Z"
+}
+```
+
+</ResponseExample>
+
+## Error Responses
+
+<ResponseField name="404" type="object">
+  API key not found
+  ```json
+  {
+    "error": "API key not found",
+    "code": "API_KEY_NOT_FOUND"
+  }
+  ```
+</ResponseField>
+
+<ResponseField name="403" type="object">
+  Cannot delete API key
+  ```json
+  {
+    "error": "Cannot delete the currently used API key",
+    "code": "CANNOT_DELETE_ACTIVE_KEY"
+  }
+  ```
+</ResponseField> 

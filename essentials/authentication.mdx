@@ -1,0 +1,379 @@
+---
+title: 'Authentication'
+description: 'Understanding MemSync authentication methods and security'
+---
+
+# Authentication
+
+MemSync uses secure authentication methods to protect user data and ensure only authorized access to memories and profiles. The platform supports JWT token-based authentication with API keys coming soon.
+
+## JWT Token Authentication
+
+### How it Works
+
+MemSync uses JSON Web Tokens (JWT) for user authentication, validated against Supabase:
+
+<Steps>
+  <Step title="User Login">
+    User authenticates through your application's login system
+  </Step>
+  
+  <Step title="Token Generation">
+    Your system generates a JWT token for the authenticated user
+  </Step>
+  
+  <Step title="API Requests">
+    Include the JWT token in the Authorization header for all API requests
+  </Step>
+  
+  <Step title="Token Validation">
+    MemSync validates the token against Supabase authentication
+  </Step>
+</Steps>
+
+### Using JWT Tokens
+
+```python
+import requests
+
+# Include JWT token in all API requests
+headers = {
+    "Authorization": "Bearer YOUR_JWT_TOKEN",
+    "Content-Type": "application/json"
+}
+
+# Example API call
+response = requests.post("https://api.memsync.ai/v1/memories/search",
+    headers=headers,
+    json={"query": "user interests", "limit": 5}
+)
+```
+
+### Token Requirements
+
+- **Format**: Bearer token in Authorization header
+- **Validation**: Must be valid against Supabase authentication
+- **Expiration**: Tokens have configurable expiration times
+- **Scope**: Tokens are user-specific and provide access to that user's data only
+
+## API Keys (Coming Soon)
+
+API keys will provide an alternative authentication method for third-party integrations:
+
+### Benefits of API Keys
+
+<CardGroup cols={2}>
+  <Card title="Simplified Integration" icon="plug">
+    Easier integration for third-party applications and services
+  </Card>
+  
+  <Card title="Enhanced Security" icon="shield">
+    App-specific keys with granular permissions and rate limiting
+  </Card>
+  
+  <Card title="Usage Tracking" icon="chart-bar">
+    Monitor API usage and performance per application
+  </Card>
+  
+  <Card title="Easy Management" icon="settings">
+    Create, rotate, and revoke keys through the dashboard
+  </Card>
+</CardGroup>
+
+### API Key Features
+
+```python
+# Coming soon: API key authentication
+headers = {
+    "X-API-Key": "YOUR_API_KEY",
+    "Content-Type": "application/json"
+}
+
+# API keys will support user_id parameter for third-party apps
+response = requests.post("https://api.memsync.ai/v1/memories/search",
+    headers=headers,
+    json={
+        "query": "user interests", 
+        "user_id": "wallet123",  # Required for API key requests
+        "limit": 5
+    }
+)
+```
+
+## Security Best Practices
+
+### Token Security
+
+<AccordionGroup>
+  <Accordion title="Secure Storage">
+    Store tokens securely and never expose them in client-side code
+    
+    ```python
+    # ✅ Good: Store in environment variables
+    import os
+    JWT_TOKEN = os.environ.get("MEMSYNC_JWT_TOKEN")
+    
+    # ❌ Bad: Hardcode in source code
+    JWT_TOKEN = "your_token_here"  # Never do this!
+    ```
+  </Accordion>
+
+  <Accordion title="Token Rotation">
+    Implement token rotation for enhanced security
+    
+    ```python
+    def refresh_token_if_needed(current_token):
+        # Check token expiration
+        if token_expires_soon(current_token):
+            # Refresh token through your auth system
+            new_token = refresh_jwt_token(current_token)
+            return new_token
+        return current_token
+    ```
+  </Accordion>
+
+  <Accordion title="Error Handling">
+    Handle authentication errors gracefully
+    
+    ```python
+    def make_authenticated_request(endpoint, data):
+        headers = {"Authorization": f"Bearer {JWT_TOKEN}"}
+        
+        try:
+            response = requests.post(endpoint, headers=headers, json=data)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 401:
+                # Handle token expiration or invalid token
+                raise AuthenticationError("Invalid or expired token")
+            raise
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Network Security
+
+- **HTTPS Only**: All API communications use HTTPS encryption
+- **Rate Limiting**: Built-in rate limiting prevents abuse
+- **Request Validation**: All requests are validated for proper format and permissions
+- **Audit Logging**: All API access is logged for security monitoring
+
+## User Context Extraction
+
+MemSync automatically extracts user context from valid JWT tokens:
+
+```python
+# The JWT token contains user information
+# MemSync automatically extracts:
+# - User ID
+# - User permissions
+# - Token expiration
+# - Authentication provider details
+
+# You don't need to pass user_id for JWT requests
+response = requests.post("https://api.memsync.ai/v1/memories",
+    headers={"Authorization": "Bearer YOUR_JWT_TOKEN"},
+    json={
+        "messages": [...],
+        "agent_id": "my-chatbot",
+        "thread_id": "conversation-123",
+        "source": "chat"
+        # user_id is automatically extracted from JWT
+    }
+)
+```
+
+## Error Responses
+
+### Authentication Errors
+
+```json
+{
+  "detail": "Invalid authentication credentials",
+  "status_code": 401,
+  "error_code": "INVALID_TOKEN"
+}
+```
+
+### Common Error Scenarios
+
+<AccordionGroup>
+  <Accordion title="401 Unauthorized">
+    **Causes:**
+    - Missing Authorization header
+    - Invalid JWT token format
+    - Expired token
+    - Token not validated against Supabase
+    
+    **Response:**
+    ```json
+    {
+      "detail": "Invalid authentication credentials",
+      "status_code": 401
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="403 Forbidden">
+    **Causes:**
+    - Valid token but insufficient permissions
+    - Attempting to access another user's data
+    - Rate limit exceeded
+    
+    **Response:**
+    ```json
+    {
+      "detail": "Insufficient permissions",
+      "status_code": 403
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="429 Too Many Requests">
+    **Causes:**
+    - Rate limit exceeded
+    - Too many requests in short time period
+    
+    **Response:**
+    ```json
+    {
+      "detail": "Rate limit exceeded",
+      "status_code": 429,
+      "retry_after": 60
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Integration Examples
+
+### Python SDK Example
+
+```python
+class MemSyncClient:
+    def __init__(self, jwt_token):
+        self.jwt_token = jwt_token
+        self.base_url = "https://api.memsync.ai/v1"
+        self.headers = {
+            "Authorization": f"Bearer {jwt_token}",
+            "Content-Type": "application/json"
+        }
+    
+    def search_memories(self, query, limit=10):
+        response = requests.post(
+            f"{self.base_url}/memories/search",
+            headers=self.headers,
+            json={"query": query, "limit": limit}
+        )
+        response.raise_for_status()
+        return response.json()
+
+# Usage
+client = MemSyncClient(jwt_token="your_jwt_token")
+memories = client.search_memories("user interests")
+```
+
+### JavaScript Example
+
+```javascript
+class MemSyncClient {
+  constructor(jwtToken) {
+    this.jwtToken = jwtToken;
+    this.baseUrl = 'https://api.memsync.ai/v1';
+    this.headers = {
+      'Authorization': `Bearer ${jwtToken}`,
+      'Content-Type': 'application/json'
+    };
+  }
+
+  async searchMemories(query, limit = 10) {
+    const response = await fetch(`${this.baseUrl}/memories/search`, {
+      method: 'POST',
+      headers: this.headers,
+      body: JSON.stringify({ query, limit })
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return response.json();
+  }
+}
+
+// Usage
+const client = new MemSyncClient('your_jwt_token');
+const memories = await client.searchMemories('user interests');
+```
+
+## Testing Authentication
+
+### Validate Your Token
+
+```python
+def test_authentication(jwt_token):
+    """Test if your JWT token is valid"""
+    headers = {"Authorization": f"Bearer {jwt_token}"}
+    
+    response = requests.get("https://api.memsync.ai/healthcheck", headers=headers)
+    
+    if response.status_code == 200:
+        print("✅ Authentication successful")
+        return True
+    else:
+        print(f"❌ Authentication failed: {response.status_code}")
+        print(response.json())
+        return False
+
+# Test your token
+test_authentication("your_jwt_token_here")
+```
+
+### Debug Authentication Issues
+
+```python
+def debug_auth_issues(jwt_token):
+    """Debug common authentication problems"""
+    
+    # Check token format
+    if not jwt_token.startswith('Bearer '):
+        jwt_token = f"Bearer {jwt_token}"
+    
+    # Check token structure
+    try:
+        import jwt
+        payload = jwt.decode(jwt_token.replace('Bearer ', ''), 
+                           options={"verify_signature": False})
+        print(f"Token payload: {payload}")
+        
+        # Check expiration
+        import time
+        if 'exp' in payload and payload['exp'] < time.time():
+            print("❌ Token is expired")
+        else:
+            print("✅ Token is not expired")
+            
+    except Exception as e:
+        print(f"❌ Token parsing error: {e}")
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="API Reference" icon="code" href="/api-reference/introduction">
+    Explore the complete API documentation with authentication examples
+  </Card>
+  
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Get started with your first authenticated API calls
+  </Card>
+  
+  <Card title="Integrations" icon="plug" href="/essentials/integrations">
+    Learn about authentication for external integrations
+  </Card>
+  
+  <Card title="Development" icon="gear" href="/development">
+    Set up authentication for local development
+  </Card>
+</CardGroup> 

@@ -1,97 +1,356 @@
 ---
 title: 'Quickstart'
-description: 'Start building awesome documentation in under 5 minutes'
+description: 'Get started with MemSync in under 5 minutes'
 ---
 
-## Setup your development
+## Welcome to MemSync
 
-Learn how to update your docs locally and deploy them to the public.
+This quickstart guide will help you integrate MemSync into your application and start building personalized AI experiences. You'll learn how to store memories, search for relevant context, and retrieve user profiles.
 
-### Edit and preview
+## Prerequisites
 
-<AccordionGroup>
-  <Accordion icon="github" title="Clone your docs locally">
-    During the onboarding process, we created a repository on your Github with
-    your docs content. You can find this repository on our
-    [dashboard](https://dashboard.mintlify.com). To clone the repository
-    locally, follow these
-    [instructions](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
-    in your terminal.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Preview changes">
-    Previewing helps you make sure your changes look as intended. We built a
-    command line interface to render these changes locally. 
-    1. Install the
-    [Mintlify CLI](https://www.npmjs.com/package/mintlify) to preview the
-    documentation changes locally with this command: ``` npm i -g mintlify ```
-    2. Run the following command at the root of your documentation (where
-    `docs.json` is): ``` mintlify dev ```
-    <Note>
-      If you’re currently using the legacy ```mint.json``` configuration file, please update the Mintlify CLI:
+Before getting started, make sure you have:
 
+- A MemSync account and API key
+- Basic knowledge of REST APIs
+- Your preferred programming language setup (Python, JavaScript, curl, etc.)
 
-      ```npm i -g mintlify@latest```
-      And run the new upgrade command in your docs repository:
+## Authentication
 
-      ```mintlify upgrade```
-      You should now be using the new ```docs.json``` configuration file. Feel free to delete the ```mint.json``` file from your repository.
-    </Note>
-  </Accordion>
-</AccordionGroup>
+MemSync uses JWT token-based authentication for all API requests. You'll need to include your JWT token in the Authorization header:
 
-### Deploy your changes
+```bash
+Authorization: Bearer YOUR_JWT_TOKEN
+```
 
-<AccordionGroup>
+<Note>
+  **Coming Soon**: App-specific API keys for enhanced security and easier integration.
+</Note>
 
-<Accordion icon="message-bot" title="Install our Github app">
-  Our Github app automatically deploys your changes to your docs site, so you
-  don't need to manage deployments yourself. You can find the link to install on
-  your [dashboard](https://dashboard.mintlify.com). Once the bot has been
-  successfully installed, there should be a check mark next to the commit hash
-  of the repo.
-</Accordion>
-<Accordion icon="rocket" title="Push your changes">
-  [Commit and push your changes to
-  Git](https://docs.github.com/en/get-started/using-git/pushing-commits-to-a-remote-repository#about-git-push)
-  for your changes to update in your docs site. If you push and don't see that
-  the Github app successfully deployed your changes, you can also manually
-  update your docs through our [dashboard](https://dashboard.mintlify.com).
-</Accordion>
+## Step 1: Store Your First Memory
 
-</AccordionGroup>
+Let's start by storing a conversation that MemSync will process to extract meaningful memories:
 
-## Update your docs
+<CodeGroup>
 
-Add content directly in your files with MDX syntax and React components. You can use any of our components, or even build your own.
+```python Python
+import requests
 
-<CardGroup>
+url = "https://api.memsync.ai/v1/memories"
+headers = {
+    "Authorization": "Bearer YOUR_JWT_TOKEN",
+    "Content-Type": "application/json"
+}
 
-<Card title="Add Content With MDX" icon="file" href="/essentials/markdown">
-  Add content to your docs with MDX syntax.
+data = {
+    "messages": [
+        {
+            "role": "user", 
+            "content": "I'm a software engineer at Google working on machine learning projects. I love hiking and photography in my free time."
+        },
+        {
+            "role": "assistant", 
+            "content": "That's great! It sounds like you have a nice balance between your technical work and creative hobbies."
+        }
+    ],
+    "agent_id": "my-chatbot",
+    "thread_id": "conversation-123",
+    "source": "chat"
+}
+
+response = requests.post(url, json=data, headers=headers)
+print(response.json())
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.memsync.ai/v1/memories', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_JWT_TOKEN',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    messages: [
+      {
+        role: "user",
+        content: "I'\''m a software engineer at Google working on machine learning projects. I love hiking and photography in my free time."
+      },
+      {
+        role: "assistant",
+        content: "That'\''s great! It sounds like you have a nice balance between your technical work and creative hobbies."
+      }
+    ],
+    agent_id: "my-chatbot",
+    thread_id: "conversation-123",
+    source: "chat"
+  })
+});
+
+const result = await response.json();
+console.log(result);
+```
+
+```bash cURL
+curl -X POST "https://api.memsync.ai/v1/memories" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "messages": [
+      {
+        "role": "user",
+        "content": "I'\''m a software engineer at Google working on machine learning projects. I love hiking and photography in my free time."
+      },
+      {
+        "role": "assistant",
+        "content": "That'\''s great! It sounds like you have a nice balance between your technical work and creative hobbies."
+      }
+    ],
+    "agent_id": "my-chatbot",
+    "thread_id": "conversation-123",
+    "source": "chat"
+  }'
+```
+
+</CodeGroup>
+
+## Step 2: Search for Relevant Memories
+
+Now let's search for memories related to the user's interests:
+
+<CodeGroup>
+
+```python Python
+import requests
+
+url = "https://api.memsync.ai/v1/memories/search"
+headers = {
+    "Authorization": "Bearer YOUR_JWT_TOKEN",
+    "Content-Type": "application/json"
+}
+
+data = {
+    "query": "What does the user do for work?",
+    "limit": 5,
+    "rerank": True
+}
+
+response = requests.post(url, json=data, headers=headers)
+result = response.json()
+
+print("User Bio:", result['user_bio'])
+print("Relevant Memories:")
+for memory in result['memories']:
+    print(f"- {memory['memory']}")
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.memsync.ai/v1/memories/search', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_JWT_TOKEN',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    query: "What does the user do for work?",
+    limit: 5,
+    rerank: true
+  })
+});
+
+const result = await response.json();
+console.log("User Bio:", result.user_bio);
+console.log("Relevant Memories:");
+result.memories.forEach(memory => {
+  console.log(`- ${memory.memory}`);
+});
+```
+
+```bash cURL
+curl -X POST "https://api.memsync.ai/v1/memories/search" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "What does the user do for work?",
+    "limit": 5,
+    "rerank": true
+  }'
+```
+
+</CodeGroup>
+
+## Step 3: Get User Profile
+
+Retrieve the user's complete profile with auto-generated bio and insights:
+
+<CodeGroup>
+
+```python Python
+import requests
+
+url = "https://api.memsync.ai/v1/users/profile"
+headers = {
+    "Authorization": "Bearer YOUR_JWT_TOKEN"
+}
+
+response = requests.get(url, headers=headers)
+profile = response.json()
+
+print("User Bio:", profile['user_bio'])
+print("Profiles:", profile['profiles'])
+print("Insights:", profile['insights'])
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.memsync.ai/v1/users/profile', {
+  headers: {
+    'Authorization': 'Bearer YOUR_JWT_TOKEN'
+  }
+});
+
+const profile = await response.json();
+console.log("User Bio:", profile.user_bio);
+console.log("Profiles:", profile.profiles);
+console.log("Insights:", profile.insights);
+```
+
+```bash cURL
+curl -X GET "https://api.memsync.ai/v1/users/profile" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+</CodeGroup>
+
+## Understanding the Response
+
+When you search for memories, MemSync returns:
+
+```json
+{
+  "user_bio": "Software engineer at Google specializing in machine learning with interests in hiking and photography",
+  "memories": [
+    {
+      "id": "mem_123",
+      "memory": "Works as a software engineer at Google focusing on machine learning projects",
+      "categories": ["career"],
+      "type": "semantic",
+      "vector_distance": 0.15,
+      "rerank_score": 0.92,
+      "source": "chat",
+      "created_at": "2024-03-20T10:00:00Z"
+    }
+  ]
+}
+```
+
+### Key Fields:
+- **user_bio**: Auto-generated summary of the user
+- **memory**: The extracted fact or memory
+- **categories**: Organized tags (career, interests, etc.)
+- **type**: semantic (lasting facts) or episodic (time-bound events)
+- **vector_distance**: Similarity score for search relevance
+- **rerank_score**: Enhanced relevance score when reranking is enabled
+
+## Next Steps
+
+Now that you've made your first API calls, explore these advanced features:
+
+<CardGroup cols={2}>
+
+<Card title="Memory Categories" icon="tags" href="/essentials/categories">
+  Learn how memories are organized into categories like work, hobbies, and relationships
 </Card>
 
-<Card
-  title="Add Code Blocks"
-  icon="square-code"
-  href="/essentials/code"
->
-  Add code directly to your docs with syntax highlighting.
+<Card title="Integration Setup" icon="plug" href="/essentials/integrations">
+  Import data from social media, documents, and chat platforms
 </Card>
 
-<Card
-  title="Add Images"
-  icon="image"
-  href="/essentials/images"
->
-  Add images to your docs to make them more engaging.
+<Card title="API Reference" icon="code" href="/api-reference/introduction">
+  Explore all available endpoints and advanced features
 </Card>
 
-<Card
-  title="Add Custom Components"
-  icon="puzzle-piece"
-  href="/essentials/reusable-snippets"
->
-  Add templates to your docs to make them more reusable.
+<Card title="Best Practices" icon="lightbulb" href="/essentials/memory-types">
+  Learn optimization techniques for memory storage and retrieval
 </Card>
 
 </CardGroup>
+
+## Example: Building a Personalized Chatbot
+
+Here's a complete example of how to build a chatbot that remembers user context:
+
+```python
+import requests
+
+class PersonalizedChatbot:
+    def __init__(self, api_key):
+        self.api_key = api_key
+        self.base_url = "https://api.memsync.ai/v1"
+        self.headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+    
+    def chat(self, user_message, user_id, thread_id="default"):
+        # 1. Search for relevant memories
+        memories = self.search_memories(user_message)
+        
+        # 2. Create context from memories
+        context = self.build_context(memories)
+        
+        # 3. Generate response (using your LLM)
+        response = self.generate_response(context, user_message)
+        
+        # 4. Store the conversation
+        self.store_conversation(user_message, response, thread_id)
+        
+        return response
+    
+    def search_memories(self, query):
+        response = requests.post(
+            f"{self.base_url}/memories/search",
+            headers=self.headers,
+            json={"query": query, "limit": 5, "rerank": True}
+        )
+        return response.json()
+    
+    def store_conversation(self, user_msg, bot_response, thread_id):
+        requests.post(
+            f"{self.base_url}/memories",
+            headers=self.headers,
+            json={
+                "messages": [
+                    {"role": "user", "content": user_msg},
+                    {"role": "assistant", "content": bot_response}
+                ],
+                "agent_id": "my-chatbot",
+                "thread_id": thread_id,
+                "source": "chat"
+            }
+        )
+
+# Usage
+chatbot = PersonalizedChatbot("YOUR_JWT_TOKEN")
+response = chatbot.chat("What should I work on today?", "user123")
+```
+
+<Tip>
+This example shows the basic pattern: search for context, generate response, store conversation. MemSync handles the complex memory extraction and organization automatically.
+</Tip>
+
+## Common Issues
+
+<AccordionGroup>
+  <Accordion title="401 Unauthorized Error">
+    Make sure your JWT token is valid and included in the Authorization header as `Bearer YOUR_TOKEN`.
+  </Accordion>
+  
+  <Accordion title="No memories returned">
+    It may take a few seconds for memories to be processed and indexed. Try searching again, or check that your conversation contained meaningful information.
+  </Accordion>
+  
+  <Accordion title="Rate limiting">
+    MemSync has rate limits to ensure service quality. If you hit limits, implement exponential backoff in your retry logic.
+  </Accordion>
+</AccordionGroup>
+
+Ready to dive deeper? Check out our [Core Concepts](/essentials/memory-types) or explore the [full API reference](/api-reference/introduction).

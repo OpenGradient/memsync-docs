@@ -1,0 +1,562 @@
+---
+title: 'Semantic Search'
+description: 'How to effectively search and retrieve memories with MemSync'
+---
+
+# Semantic Search
+
+MemSync's semantic search goes beyond keyword matching to understand the meaning and context of your queries. This powerful feature uses vector embeddings and advanced ranking to find the most relevant memories for any situation.
+
+## How Semantic Search Works
+
+### Vector Embeddings
+
+MemSync converts both memories and search queries into high-dimensional vectors that capture semantic meaning:
+
+<Steps>
+  <Step title="Memory Storage">
+    When memories are stored, they're converted into vector embeddings using advanced language models
+  </Step>
+  
+  <Step title="Query Processing">
+    Your search query is converted into the same vector space
+  </Step>
+  
+  <Step title="Similarity Matching">
+    The system finds memories with vectors closest to your query vector
+  </Step>
+  
+  <Step title="Ranking & Reranking">
+    Results are ranked by relevance and optionally reranked for improved accuracy
+  </Step>
+</Steps>
+
+### Search Algorithm
+
+```python
+# Simplified search process
+def search_memories(query, user_id, limit=10, rerank=True):
+    # 1. Convert query to embedding
+    query_embedding = embed_text(query)
+    
+    # 2. Find similar vectors in database
+    candidates = vector_store.search(
+        embedding=query_embedding,
+        user_id=user_id,
+        limit=limit * 3  # Get more candidates for reranking
+    )
+    
+    # 3. Optional reranking for improved relevance
+    if rerank:
+        candidates = rerank_results(query, candidates)
+    
+    # 4. Return top results
+    return candidates[:limit]
+```
+
+## Basic Search Examples
+
+### Simple Queries
+
+```python
+import requests
+
+# Find work-related information
+response = requests.post("https://api.memsync.ai/v1/memories/search", 
+    headers={"Authorization": "Bearer YOUR_TOKEN"},
+    json={
+        "query": "What does the user do for work?",
+        "limit": 5
+    }
+)
+
+# Find hobbies and interests
+response = requests.post("https://api.memsync.ai/v1/memories/search",
+    headers={"Authorization": "Bearer YOUR_TOKEN"}, 
+    json={
+        "query": "What are the user's hobbies?",
+        "limit": 8
+    }
+)
+```
+
+### Natural Language Queries
+
+MemSync understands natural language, allowing for conversational search:
+
+```python
+queries = [
+    "What is the user passionate about?",
+    "Tell me about their family",
+    "What skills is the user learning?",
+    "What are their career goals?",
+    "How does the user stay healthy?",
+    "What challenges is the user facing?"
+]
+
+for query in queries:
+    memories = search_memories(query, limit=5)
+```
+
+## Advanced Search Features
+
+### Category Filtering
+
+Narrow your search to specific categories:
+
+```python
+# Search only career-related memories
+career_search = {
+    "query": "What projects is the user working on?",
+    "categories": ["career"],
+    "limit": 10
+}
+
+# Search across multiple categories  
+learning_search = {
+    "query": "What is the user studying?",
+    "categories": ["learning", "career"],
+    "limit": 15
+}
+
+# Search health and wellness
+wellness_search = {
+    "query": "How does the user take care of themselves?",
+    "categories": ["health", "interests"],
+    "limit": 8
+}
+```
+
+### Agent and Thread Filtering
+
+Search within specific conversations or agents:
+
+```python
+# Search within a specific conversation thread
+thread_search = {
+    "query": "What did we discuss about the project?",
+    "thread_id": "conversation-123",
+    "limit": 10
+}
+
+# Search across specific agent's interactions
+agent_search = {
+    "query": "What preferences has the user mentioned?",
+    "agent_id": "my-chatbot",
+    "limit": 15
+}
+```
+
+### Reranking
+
+Enable reranking for improved search quality:
+
+```python
+# Basic search
+basic_search = {
+    "query": "user interests",
+    "limit": 10,
+    "rerank": False
+}
+
+# Enhanced search with reranking
+enhanced_search = {
+    "query": "user interests", 
+    "limit": 10,
+    "rerank": True  # Improves result relevance
+}
+```
+
+<Note>
+Reranking uses additional processing but significantly improves search quality, especially for complex queries.
+</Note>
+
+## Search Query Optimization
+
+### Effective Query Patterns
+
+<AccordionGroup>
+  <Accordion title="Specific vs. General">
+    **Specific queries** often work better than generic ones:
+    
+    ```python
+    # Less effective
+    "user info"
+    
+    # More effective
+    "What is the user's professional background?"
+    "What activities does the user enjoy on weekends?"
+    "What goals is the user working towards?"
+    ```
+  </Accordion>
+
+  <Accordion title="Context-Rich Queries">
+    Include context to get more relevant results:
+    
+    ```python
+    # Basic
+    "user skills"
+    
+    # Context-rich
+    "What technical skills does the user have for their software engineering career?"
+    "What cooking skills is the user developing for healthy eating?"
+    ```
+  </Accordion>
+
+  <Accordion title="Question Format">
+    Question-format queries often perform well:
+    
+    ```python
+    effective_queries = [
+        "What does the user do for fun?",
+        "Where does the user work?", 
+        "What is the user learning right now?",
+        "How does the user prefer to work?",
+        "What challenges is the user facing?"
+    ]
+    ```
+  </Accordion>
+
+  <Accordion title="Intent-Based Queries">
+    Focus on the intent behind your search:
+    
+    ```python
+    # For personalization
+    "What would make this user happy?"
+    "What motivates the user?"
+    
+    # For recommendations
+    "What kind of content would interest the user?"
+    "What products might the user want to buy?"
+    
+    # For context understanding
+    "What is important to the user right now?"
+    "What is the user struggling with?"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Understanding Search Results
+
+### Result Structure
+
+```json
+{
+  "user_bio": "Software engineer passionate about AI and outdoor activities",
+  "memories": [
+    {
+      "id": "mem_123",
+      "memory": "Works as a Senior Software Engineer at Google focusing on ML infrastructure",
+      "categories": ["career"],
+      "type": "semantic",  
+      "vector_distance": 0.12,    // Lower = more similar
+      "rerank_score": 0.95,       // Higher = more relevant
+      "source": "chat",
+      "created_at": "2024-03-20T10:00:00Z",
+      "updated_at": "2024-03-20T10:00:00Z",
+      "agent_id": "my-chatbot",
+      "thread_id": "conv-456"
+    }
+  ]
+}
+```
+
+### Key Metrics
+
+- **vector_distance**: Semantic similarity (0.0 = identical, 1.0 = completely different)
+- **rerank_score**: Relevance score when reranking is enabled (0.0-1.0, higher is better)
+- **categories**: Helps understand what aspect of the user this memory represents
+- **type**: Semantic (lasting facts) vs Episodic (time-bound information)
+
+### Result Interpretation
+
+```python
+def interpret_results(memories):
+    for memory in memories:
+        relevance = "high" if memory.vector_distance < 0.3 else "medium" if memory.vector_distance < 0.6 else "low"
+        print(f"Relevance: {relevance} - {memory.memory}")
+        
+        # Rerank score available if reranking was used
+        if memory.rerank_score:
+            quality = "excellent" if memory.rerank_score > 0.8 else "good" if memory.rerank_score > 0.6 else "fair"
+            print(f"Quality: {quality}")
+```
+
+## Search Strategies
+
+### Progressive Search
+
+Start broad, then narrow down:
+
+```python
+# Step 1: Broad discovery
+overview = search_memories("Tell me about this user", limit=20)
+
+# Step 2: Focus on interesting categories
+if has_career_memories(overview):
+    career_details = search_memories(
+        "What are the user's professional goals and challenges?",
+        categories=["career", "learning"],
+        limit=10
+    )
+
+# Step 3: Deep dive into specific areas
+if has_current_projects(career_details):
+    project_details = search_memories(
+        "What specific projects is the user working on right now?",
+        categories=["career"],
+        limit=5
+    )
+```
+
+### Multi-Faceted Search
+
+Search different aspects of the user:
+
+```python
+def get_user_context(user_id):
+    searches = {
+        "professional": "What is the user's career background and goals?",
+        "personal": "What does the user enjoy doing in their free time?", 
+        "current_focus": "What is the user currently working on or learning?",
+        "preferences": "What are the user's preferences and dislikes?",
+        "relationships": "Who is important to the user?"
+    }
+    
+    context = {}
+    for aspect, query in searches.items():
+        context[aspect] = search_memories(query, limit=8)
+    
+    return context
+```
+
+### Contextual Search
+
+Use previous conversation context:
+
+```python
+def contextual_search(current_message, conversation_history):
+    # Extract topics from current conversation
+    topics = extract_topics(conversation_history)
+    
+    # Build contextual query
+    if "work" in topics:
+        query = f"What has the user said about work and career? Context: {current_message}"
+    elif "hobbies" in topics:
+        query = f"What are the user's interests and hobbies? Context: {current_message}"
+    else:
+        query = f"What's relevant to: {current_message}"
+    
+    return search_memories(query, limit=10, rerank=True)
+```
+
+## Performance Optimization
+
+### Search Best Practices
+
+<AccordionGroup>
+  <Accordion title="Limit Optimization">
+    Choose appropriate limits based on use case:
+    
+    ```python
+    # Quick context: 3-5 memories
+    quick_context = search_memories("user overview", limit=5)
+    
+    # Detailed personalization: 10-15 memories  
+    detailed_context = search_memories("comprehensive user profile", limit=15)
+    
+    # Exploratory analysis: 20+ memories
+    full_analysis = search_memories("everything about user", limit=25)
+    ```
+  </Accordion>
+
+  <Accordion title="Reranking Strategy">
+    Use reranking selectively for better performance:
+    
+    ```python
+    # Use reranking for complex queries
+    complex_query = search_memories(
+        "How does the user balance work and personal life priorities?",
+        rerank=True,  # Worth the extra processing
+        limit=10
+    )
+    
+    # Skip reranking for simple category searches
+    simple_query = search_memories(
+        "user career",
+        categories=["career"],
+        rerank=False,  # Category filtering is sufficient
+        limit=8
+    )
+    ```
+  </Accordion>
+
+  <Accordion title="Caching Strategy">
+    Cache frequent searches for better performance:
+    
+    ```python
+    import functools
+    import time
+    
+    @functools.lru_cache(maxsize=100)
+    def cached_search(query, user_id, categories_tuple=None, limit=10):
+        return search_memories(
+            query=query,
+            user_id=user_id, 
+            categories=list(categories_tuple) if categories_tuple else None,
+            limit=limit
+        )
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Common Use Cases
+
+### Personalized Responses
+
+```python
+def generate_personalized_response(user_message, user_id):
+    # Find relevant context
+    context_memories = search_memories(
+        f"What's relevant to helping with: {user_message}",
+        user_id=user_id,
+        limit=8,
+        rerank=True
+    )
+    
+    # Build context string
+    context = "\n".join([m.memory for m in context_memories])
+    
+    # Generate response with context
+    return llm.generate_response(
+        system_prompt=f"User context: {context}",
+        user_message=user_message
+    )
+```
+
+### Content Recommendations
+
+```python
+def recommend_content(user_id):
+    # Find interests and preferences
+    interests = search_memories(
+        "What topics and activities interest the user?",
+        categories=["interests", "learning"],
+        limit=10
+    )
+    
+    # Find current goals
+    goals = search_memories(
+        "What is the user trying to achieve or learn?",
+        categories=["learning", "career", "health"],
+        limit=8
+    )
+    
+    return generate_recommendations(interests, goals)
+```
+
+### User Analysis
+
+```python
+def analyze_user_profile(user_id):
+    analyses = {
+        "expertise": search_memories("What is the user an expert in?", limit=5),
+        "learning": search_memories("What is the user currently learning?", limit=5),
+        "challenges": search_memories("What challenges is the user facing?", limit=5),
+        "motivations": search_memories("What motivates and drives the user?", limit=5)
+    }
+    
+    return {key: [m.memory for m in memories] for key, memories in analyses.items()}
+```
+
+## Troubleshooting Search
+
+### Common Issues
+
+<AccordionGroup>
+  <Accordion title="No Results Returned">
+    **Possible causes:**
+    - Query too specific or using uncommon terms
+    - No memories stored yet for the user
+    - Query doesn't match stored memory language
+    
+    **Solutions:**
+    ```python
+    # Try broader queries
+    broad_query = search_memories("user information", limit=20)
+    
+    # Check if user has any memories
+    all_memories = get_all_memories(user_id, limit=50)
+    
+    # Try different phrasings
+    alternative_queries = [
+        "What does the user do?",
+        "User background",
+        "Tell me about this person"
+    ]
+    ```
+  </Accordion>
+
+  <Accordion title="Irrelevant Results">
+    **Possible causes:**
+    - Query too broad or ambiguous
+    - Need reranking enabled
+    - Categories not specified
+    
+    **Solutions:**
+    ```python
+    # Use more specific queries
+    specific_query = search_memories(
+        "What is the user's current job title and company?",
+        categories=["career"],
+        limit=5
+    )
+    
+    # Enable reranking
+    reranked_query = search_memories(
+        "user work experience",
+        rerank=True,
+        limit=10
+    )
+    ```
+  </Accordion>
+
+  <Accordion title="Outdated Results">
+    **Possible causes:**
+    - Old episodic memories ranking high
+    - Need to update or clean old memories
+    
+    **Solutions:**
+    ```python
+    # Focus on recent memories by using current context
+    current_query = search_memories(
+        "What is the user currently doing and working on right now?",
+        limit=10
+    )
+    
+    # Check memory timestamps and update as needed
+    memories = search_memories("user status", limit=20)
+    recent_memories = [m for m in memories if is_recent(m.updated_at)]
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="User Profiles" icon="user" href="/essentials/profiles">
+    Learn how search results combine to create comprehensive user profiles
+  </Card>
+  
+  <Card title="Memory Types" icon="brain" href="/essentials/memory-types">
+    Understand how memory types affect search results
+  </Card>
+  
+  <Card title="Memory Categories" icon="tags" href="/essentials/categories">
+    Master category-based search strategies
+  </Card>
+  
+  <Card title="Search API" icon="code" href="/api-reference/endpoint/search-memories">
+    Explore the complete search API documentation
+  </Card>
+</CardGroup> 

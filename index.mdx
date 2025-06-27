@@ -1,71 +1,149 @@
 ---
 title: Introduction
-description: "Welcome to the home of your new documentation"
+description: "Build personalized AI experiences with long-term memory and context"
 ---
 
 <img
   className="block dark:hidden"
   src="/images/hero-light.png"
-  alt="Hero Light"
+  alt="MemSync Hero Light"
 />
 <img
   className="hidden dark:block"
   src="/images/hero-dark.png"
-  alt="Hero Dark"
+  alt="MemSync Hero Dark"
 />
 
-## Setting up
+# Welcome to MemSync
 
-The first step to world-class documentation is setting up your editing environments.
+MemSync is a powerful platform for creating personalized AI experiences by managing long-term context and user memories. Transform your AI applications from stateless interactions into intelligent, context-aware experiences that remember and learn from every conversation.
 
-<CardGroup cols={2}>
-  <Card
-    title="Edit Your Docs"
-    icon="pen-to-square"
-    href="https://mintlify.com/docs/quickstart"
-  >
-    Get your docs set up locally for easy development
-  </Card>
-  <Card
-    title="Preview Changes"
-    icon="image"
-    href="https://mintlify.com/docs/development"
-  >
-    Preview your changes before you push to make sure they're perfect
-  </Card>
-</CardGroup>
+## Why MemSync?
 
-## Make it yours
+Traditional AI applications forget everything after each conversation. MemSync changes this by:
 
-Update your docs to your brand and add valuable content for the best user conversion.
+- **Extracting meaningful facts** from conversations automatically
+- **Storing long-term memories** in organized, searchable formats
+- **Providing semantic search** to find relevant context instantly
+- **Building user profiles** that evolve over time
+- **Integrating external data** from social media, documents, and chat history
+
+## Quick Start
+
+Get started with MemSync in minutes:
 
 <CardGroup cols={2}>
   <Card
-    title="Customize Style"
-    icon="palette"
-    href="https://mintlify.com/docs/settings/global"
+    title="Quickstart Guide"
+    icon="rocket"
+    href="/quickstart"
   >
-    Customize your docs to your company's colors and brands
+    Set up MemSync and make your first API call in under 5 minutes
   </Card>
   <Card
-    title="Reference APIs"
+    title="API Reference"
     icon="code"
-    href="https://mintlify.com/docs/api-playground/openapi"
+    href="/api-reference/introduction"
   >
-    Automatically generate endpoints from an OpenAPI spec
-  </Card>
-  <Card
-    title="Add Components"
-    icon="screwdriver-wrench"
-    href="https://mintlify.com/docs/content/components/accordions"
-  >
-    Build interactive features and designs to guide your users
-  </Card>
-  <Card
-    title="Get Inspiration"
-    icon="stars"
-    href="https://mintlify.com/customers"
-  >
-    Check out our showcase of our favorite documentation
+    Explore the complete API documentation with examples
   </Card>
 </CardGroup>
+
+## Core Features
+
+<CardGroup cols={2}>
+  <Card
+    title="Memory Management"
+    icon="brain"
+    href="/essentials/memory-types"
+  >
+    Learn about semantic and episodic memories, how they're extracted and stored
+  </Card>
+  <Card
+    title="Smart Categories"
+    icon="tags"
+    href="/essentials/categories"
+  >
+    Organize memories into categories like work, hobbies, relationships, and more
+  </Card>
+  <Card
+    title="Semantic Search"
+    icon="search"
+    href="/essentials/search"
+  >
+    Find relevant memories using natural language queries with vector search
+  </Card>
+  <Card
+    title="User Profiles"
+    icon="user"
+    href="/essentials/profiles"
+  >
+    Auto-generate user bios and profiles from accumulated memories
+  </Card>
+</CardGroup>
+
+## Integrations
+
+Connect MemSync with your existing tools and data sources:
+
+<CardGroup cols={3}>
+  <Card
+    title="Social Media"
+    icon="share-nodes"
+    href="/essentials/integrations"
+  >
+    Import context from LinkedIn, Twitter, and Reddit
+  </Card>
+  <Card
+    title="Documents"
+    icon="file-text"
+    href="/essentials/integrations"
+  >
+    Process PDFs, Word docs, and other files
+  </Card>
+  <Card
+    title="Chat History"
+    icon="comments"
+    href="/essentials/integrations"
+  >
+    Import conversations from ChatGPT and other platforms
+  </Card>
+</CardGroup>
+
+## Example Use Cases
+
+### Personalized Chatbots
+```python
+# Get relevant memories for context
+memories = memsync.search_memories(
+    query="What does the user like to do?",
+    user_id="user123",
+    limit=5
+)
+
+# Use memories to personalize response
+context = "\n".join([m.memory for m in memories])
+response = llm.generate(context=context, message=user_message)
+```
+
+### Customer Support
+- Remember customer preferences and past issues
+- Provide contextual support based on interaction history
+- Track customer journey and satisfaction
+
+### Educational Platforms
+- Track learning progress and preferences
+- Personalize curriculum based on user goals
+- Remember areas of difficulty and success
+
+## Getting Started
+
+Ready to build your first personalized AI experience?
+
+<Card
+  title="Start Building"
+  icon="hammer"
+  href="/quickstart"
+>
+  Follow our quickstart guide to set up MemSync and make your first API call
+</Card>

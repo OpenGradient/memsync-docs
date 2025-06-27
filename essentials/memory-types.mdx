@@ -1,0 +1,271 @@
+---
+title: 'Memory Types'
+description: 'Understanding semantic and episodic memories in MemSync'
+---
+
+# Memory Types
+
+MemSync uses two distinct types of memories to capture different kinds of information from user interactions. Understanding these types helps you optimize how your AI application stores and retrieves context.
+
+## Semantic Memories
+
+**Semantic memories** represent stable, lasting facts that are not tied to a specific time or place. These are the core truths about a user that remain relatively constant over time.
+
+### Characteristics
+
+- **Persistent**: Don't change frequently
+- **Context-independent**: True regardless of when or where they were mentioned
+- **Factual**: Represent established knowledge about the user
+- **Searchable**: Highly valuable for providing relevant context
+
+### Examples
+
+<CardGroup cols={2}>
+  <Card title="Identity" icon="user">
+    - "User is a software engineer at Google"
+    - "Lives in San Francisco, California"
+    - "Graduated from Stanford with a CS degree"
+  </Card>
+  
+  <Card title="Skills & Expertise" icon="brain">
+    - "Experienced in Python and machine learning"
+    - "Specializes in natural language processing"
+    - "Has 5 years of backend development experience"
+  </Card>
+  
+  <Card title="Preferences" icon="heart">
+    - "Prefers working in collaborative environments"
+    - "Enjoys technical challenges and problem-solving"
+    - "Values work-life balance"
+  </Card>
+  
+  <Card title="Interests" icon="star">
+    - "Passionate about hiking and photography"
+    - "Interested in AI ethics and responsible development"
+    - "Enjoys reading science fiction novels"
+  </Card>
+</CardGroup>
+
+## Episodic Memories
+
+**Episodic memories** relate to current situations, goals, or projects that might change over time. They are tied to specific moments and could evolve or become outdated.
+
+### Characteristics
+
+- **Time-bound**: Relevant to a specific period or context
+- **Dynamic**: May change, complete, or become irrelevant over time
+- **Situational**: Tied to particular circumstances or goals
+- **Contextual**: Provide important background for current interactions
+
+### Examples
+
+<CardGroup cols={2}>
+  <Card title="Current Projects" icon="briefcase">
+    - "Currently working on a new iOS app for AI model monetization"
+    - "Leading a team of 3 engineers and 1 marketing person"
+    - "Planning to launch the app in Q2 2024"
+  </Card>
+  
+  <Card title="Active Goals" icon="target">
+    - "Learning how to cook new recipes for weight loss"
+    - "Training for a marathon in 6 months"
+    - "Studying for AWS certification exam"
+  </Card>
+  
+  <Card title="Recent Events" icon="calendar">
+    - "Just moved to a new apartment last week"
+    - "Recently started using MemSync for their chatbot"
+    - "Had a great conversation about AI safety yesterday"
+  </Card>
+  
+  <Card title="Temporary States" icon="clock">
+    - "Currently traveling in Europe for 2 weeks"
+    - "Taking a break from social media this month"
+    - "Working from home while recovering from injury"
+  </Card>
+</CardGroup>
+
+## How MemSync Determines Memory Types
+
+MemSync uses advanced language models to automatically classify memories during extraction. The system analyzes several factors:
+
+### Semantic Memory Indicators
+
+```python
+# Examples of content that becomes semantic memory
+user_input = [
+    "I work as a data scientist at Microsoft",  # Job/identity
+    "I have two cats named Luna and Max",       # Personal facts
+    "I prefer Python over JavaScript",         # Preferences
+    "I studied computer science at MIT"        # Background/education
+]
+```
+
+### Episodic Memory Indicators
+
+```python
+# Examples of content that becomes episodic memory
+user_input = [
+    "I'm currently working on a React project",     # Current project
+    "I'm learning Spanish this semester",           # Active learning
+    "I just started a new diet plan",              # Recent change
+    "I'm planning to visit Japan next month"       # Future plans
+]
+```
+
+## Memory Classification Process
+
+<Steps>
+  <Step title="Conversation Analysis">
+    MemSync analyzes the full conversation context to understand what information is being shared.
+  </Step>
+  
+  <Step title="Fact Extraction">
+    The system extracts meaningful facts using advanced prompts designed to identify important information.
+  </Step>
+  
+  <Step title="Type Classification">
+    Each extracted fact is classified as semantic or episodic based on temporal indicators, context, and content analysis.
+  </Step>
+  
+  <Step title="Storage & Indexing">
+    Memories are stored with their type classification and made searchable through vector embeddings.
+  </Step>
+</Steps>
+
+## Best Practices for Memory Types
+
+### For Developers
+
+<AccordionGroup>
+  <Accordion title="Optimizing Memory Extraction">
+    - Provide rich conversation context to help MemSync understand what information is important
+    - Include relevant details that help classify memories correctly
+    - Use consistent terminology for better memory organization
+  </Accordion>
+
+  <Accordion title="Search Strategy">
+    - Use broad queries to find semantic memories (e.g., "What does the user do for work?")
+    - Use specific queries to find episodic memories (e.g., "What is the user currently working on?")
+    - Combine both types in search results for comprehensive context
+  </Accordion>
+
+  <Accordion title="Memory Lifecycle">
+    - Semantic memories typically have longer relevance
+    - Episodic memories may need periodic updates or cleanup
+    - Monitor memory relevance over time and update as needed
+  </Accordion>
+</AccordionGroup>
+
+## Memory Evolution
+
+### Semantic Memory Updates
+
+When new information conflicts with existing semantic memories, MemSync intelligently handles updates:
+
+```json
+// Original semantic memory
+{
+  "memory": "Works as a software engineer at Google",
+  "type": "semantic",
+  "categories": ["career"]
+}
+
+// New information: "I just got promoted to Senior Software Engineer"
+// Results in updated memory:
+{
+  "memory": "Works as a Senior Software Engineer at Google",
+  "type": "semantic", 
+  "categories": ["career"]
+}
+```
+
+### Episodic Memory Transitions
+
+Episodic memories can evolve or transition to semantic memories:
+
+```json
+// Original episodic memory
+{
+  "memory": "Currently learning React for a new project",
+  "type": "episodic",
+  "categories": ["learning", "career"]
+}
+
+// After project completion: "I've become proficient in React"
+// May become semantic memory:
+{
+  "memory": "Proficient in React development",
+  "type": "semantic",
+  "categories": ["career"]
+}
+```
+
+## Integration with Search
+
+Understanding memory types helps optimize search queries:
+
+### Semantic Memory Search
+
+```python
+# Good for finding stable facts
+memories = memsync.search_memories(
+    query="What are the user's technical skills?",
+    categories=["career"],
+    limit=10
+)
+```
+
+### Episodic Memory Search
+
+```python
+# Good for finding current context
+memories = memsync.search_memories(
+    query="What is the user currently working on?",
+    categories=["career", "learning"],
+    limit=5
+)
+```
+
+### Combined Search
+
+```python
+# Best for comprehensive personalization
+memories = memsync.search_memories(
+    query="Tell me about the user's background and current projects",
+    limit=15,
+    rerank=True
+)
+```
+
+## Memory Type Distribution
+
+In typical usage, you'll see different distributions of memory types:
+
+- **Semantic memories**: 60-70% of total memories
+- **Episodic memories**: 30-40% of total memories
+
+This distribution can vary based on:
+- User interaction patterns
+- Application type (task-focused vs. general chat)
+- Conversation topics and context
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Memory Categories" icon="tags" href="/essentials/categories">
+    Learn how memories are organized into categories like work, hobbies, and relationships
+  </Card>
+  
+  <Card title="Semantic Search" icon="search" href="/essentials/search">
+    Discover how to effectively search and retrieve relevant memories
+  </Card>
+  
+  <Card title="User Profiles" icon="user" href="/essentials/profiles">
+    Understand how memories combine to create comprehensive user profiles
+  </Card>
+  
+  <Card title="API Reference" icon="code" href="/api-reference/introduction">
+    Explore the API endpoints for working with memories
+  </Card>
+</CardGroup> 
