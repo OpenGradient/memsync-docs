@@ -1,6 +1,6 @@
 ---
 title: Introduction
-description: "Build personalized AI experiences with long-term memory and context"
+description: "Build personalized AI experiences with MemSync's portable long-term memory"
 ---
 
 <img
@@ -16,7 +16,7 @@ description: "Build personalized AI experiences with long-term memory and contex
 
 # Welcome to MemSync
 
-MemSync is a powerful platform for creating personalized AI experiences by managing long-term context and user memories. Transform your AI applications from stateless interactions into intelligent, context-aware experiences that remember and learn from every conversation.
+MemSync is a portable memory platform that elevates AI applications from stateless interactions to intelligent, context-aware experiences with persistent long-term memory. It also enables users to seamlessly transfer context and data across different applications into your app.
 
 ## Why MemSync?
 
@@ -68,7 +68,7 @@ Get started with MemSync in minutes:
   </Card>
   <Card
     title="Semantic Search"
-    icon="search"
+    icon="magnifying-glass"
     href="/essentials/search"
   >
     Find relevant memories using natural language queries with vector search
@@ -96,7 +96,7 @@ Connect MemSync with your existing tools and data sources:
   </Card>
   <Card
     title="Documents"
-    icon="file-text"
+    icon="file-pdf"
     href="/essentials/integrations"
   >
     Process PDFs, Word docs, and other files
@@ -113,18 +113,9 @@ Connect MemSync with your existing tools and data sources:
 ## Example Use Cases
 
 ### Personalized Chatbots
-```python
-# Get relevant memories for context
-memories = memsync.search_memories(
-    query="What does the user like to do?",
-    user_id="user123",
-    limit=5
-)
-
-# Use memories to personalize response
-context = "\n".join([m.memory for m in memories])
-response = llm.generate(context=context, message=user_message)
-```
+- Remember customer preferences and past issues
+- Provide contextual support based on interaction history
+- Track customer journey and satisfaction
 
 ### Customer Support
 - Remember customer preferences and past issues
@@ -138,8 +129,19 @@ response = llm.generate(context=context, message=user_message)
 
 ## Getting Started
 
-Ready to build your first personalized AI experience?
+Ready to build your first personalized AI with memory retrieval?
+```python
+# Get relevant memories for context
+memories = memsync.search_memories(
+    query="What's the latest news related to my educational interests?",
+    user_id="user123",
+    limit=5
+)
 
+# Use memories to personalize response
+context = "\n".join([m.memory for m in memories])
+response = llm.generate(context=context, message=user_message)
+```
 <Card
   title="Start Building"
   icon="hammer"

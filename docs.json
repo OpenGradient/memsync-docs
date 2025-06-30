@@ -7,6 +7,9 @@
     "dark": "#0284C7"
   },
   "favicon": "/images/memsync_logo.png",
+  "customization": {
+    "script": "/custom-scripts.js"
+  },
   "navigation": {
     "tabs": [
       {
@@ -83,19 +86,19 @@
     "global": {
       "anchors": [
         {
+          "anchor": "About",
+          "href": "https://x.com/0xDeltaHedged/status/1938239003565719668",
+          "icon": "newspaper"
+        },
+        {
           "anchor": "GitHub",
-          "href": "https://github.com/memsync/memsync",
+          "href": "javascript:void(0)",
           "icon": "github"
         },
         {
           "anchor": "MemSync X",
           "href": "https://x.com/memsync_ai",
           "icon": "x-twitter"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://memsync.ai/blog",
-          "icon": "newspaper"
         }
       ]
     }
@@ -108,7 +111,7 @@
     "links": [
       {
         "label": "Dashboard",
-        "href": "https://app.memsync.ai"
+        "href": "javascript:void(0)"
       }
     ],
     "primary": {
