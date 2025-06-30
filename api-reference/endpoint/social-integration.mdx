@@ -10,7 +10,7 @@ Connects social media accounts to automatically import memories from posts, inte
 
 ```bash cURL
 curl -X POST 'https://api.memsync.ai/integrations/social' \
-  -H 'Authorization: Bearer YOUR_JWT_TOKEN' \
+  -H 'X-API-Key: YOUR_API_KEY' \
   -H 'Content-Type: application/json' \
   -d '{
     "platform": "linkedin",
@@ -28,7 +28,7 @@ import requests
 
 url = "https://api.memsync.ai/integrations/social"
 headers = {
-    "Authorization": "Bearer YOUR_JWT_TOKEN",
+    "X-API-Key": "YOUR_API_KEY",
     "Content-Type": "application/json"
 }
 
@@ -50,7 +50,7 @@ integration = response.json()
 const response = await fetch('https://api.memsync.ai/integrations/social', {
   method: 'POST',
   headers: {
-    'Authorization': 'Bearer YOUR_JWT_TOKEN',
+    'X-API-Key': 'YOUR_API_KEY',
     'Content-Type': 'application/json',
   },
   body: JSON.stringify({

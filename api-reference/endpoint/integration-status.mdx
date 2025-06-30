@@ -10,7 +10,7 @@ Retrieves the current status, progress, and details of a specific integration.
 
 ```bash cURL
 curl -X GET 'https://api.memsync.ai/integrations/int_linkedin_123/status' \
-  -H 'Authorization: Bearer YOUR_JWT_TOKEN'
+  -H 'X-API-Key: YOUR_API_KEY'
 ```
 
 ```python Python
@@ -18,7 +18,7 @@ import requests
 
 url = "https://api.memsync.ai/integrations/int_linkedin_123/status"
 headers = {
-    "Authorization": "Bearer YOUR_JWT_TOKEN"
+    "X-API-Key": "YOUR_API_KEY"
 }
 
 response = requests.get(url, headers=headers)
@@ -29,7 +29,7 @@ status = response.json()
 const response = await fetch('https://api.memsync.ai/integrations/int_linkedin_123/status', {
   method: 'GET',
   headers: {
-    'Authorization': 'Bearer YOUR_JWT_TOKEN',
+    'X-API-Key': 'YOUR_API_KEY',
   },
 });
 

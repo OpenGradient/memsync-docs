@@ -17,10 +17,10 @@ Before getting started, make sure you have:
 
 ## Authentication
 
-MemSync uses JWT token-based authentication for all API requests. You'll need to include your JWT token in the Authorization header:
+MemSync uses API key-based authentication for all API requests. You'll need to include your API key in the X-API-Key header:
 
 ```bash
-Authorization: Bearer YOUR_JWT_TOKEN
+X-API-Key: YOUR_API_KEY
 ```
 
 <Note>
@@ -38,7 +38,7 @@ import requests
 
 url = "https://api.memsync.ai/v1/memories"
 headers = {
-    "Authorization": "Bearer YOUR_JWT_TOKEN",
+    "X-API-Key": "YOUR_API_KEY",
     "Content-Type": "application/json"
 }
 
@@ -66,7 +66,7 @@ print(response.json())
 const response = await fetch('https://api.memsync.ai/v1/memories', {
   method: 'POST',
   headers: {
-    'Authorization': 'Bearer YOUR_JWT_TOKEN',
+    'X-API-Key': 'YOUR_API_KEY',
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
@@ -92,7 +92,7 @@ console.log(result);
 
 ```bash cURL
 curl -X POST "https://api.memsync.ai/v1/memories" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "X-API-Key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "messages": [
@@ -124,7 +124,7 @@ import requests
 
 url = "https://api.memsync.ai/v1/memories/search"
 headers = {
-    "Authorization": "Bearer YOUR_JWT_TOKEN",
+    "X-API-Key": "YOUR_API_KEY",
     "Content-Type": "application/json"
 }
 
@@ -147,7 +147,7 @@ for memory in result['memories']:
 const response = await fetch('https://api.memsync.ai/v1/memories/search', {
   method: 'POST',
   headers: {
-    'Authorization': 'Bearer YOUR_JWT_TOKEN',
+    'X-API-Key': 'YOUR_API_KEY',
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
@@ -167,7 +167,7 @@ result.memories.forEach(memory => {
 
 ```bash cURL
 curl -X POST "https://api.memsync.ai/v1/memories/search" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "X-API-Key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "query": "What does the user do for work?",
@@ -189,7 +189,7 @@ import requests
 
 url = "https://api.memsync.ai/v1/users/profile"
 headers = {
-    "Authorization": "Bearer YOUR_JWT_TOKEN"
+    "X-API-Key": "YOUR_API_KEY"
 }
 
 response = requests.get(url, headers=headers)
@@ -203,7 +203,7 @@ print("Insights:", profile['insights'])
 ```javascript JavaScript
 const response = await fetch('https://api.memsync.ai/v1/users/profile', {
   headers: {
-    'Authorization': 'Bearer YOUR_JWT_TOKEN'
+    'X-API-Key': 'YOUR_API_KEY'
   }
 });
 
@@ -215,7 +215,7 @@ console.log("Insights:", profile.insights);
 
 ```bash cURL
 curl -X GET "https://api.memsync.ai/v1/users/profile" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+  -H "X-API-Key: YOUR_API_KEY"
 ```
 
 </CodeGroup>
@@ -286,7 +286,7 @@ class PersonalizedChatbot:
         self.api_key = api_key
         self.base_url = "https://api.memsync.ai/v1"
         self.headers = {
-            "Authorization": f"Bearer {api_key}",
+            "X-API-Key": api_key,
             "Content-Type": "application/json"
         }
     
@@ -329,10 +329,9 @@ class PersonalizedChatbot:
         )
 
 # Usage
-chatbot = PersonalizedChatbot("YOUR_JWT_TOKEN")
+chatbot = PersonalizedChatbot("YOUR_API_KEY")
 response = chatbot.chat("What should I work on today?", "user123")
 ```
-
 <Tip>
 This example shows the basic pattern: search for context, generate response, store conversation. MemSync handles the complex memory extraction and organization automatically.
 </Tip>
@@ -341,7 +340,7 @@ This example shows the basic pattern: search for context, generate response, sto
 
 <AccordionGroup>
   <Accordion title="401 Unauthorized Error">
-    Make sure your JWT token is valid and included in the Authorization header as `Bearer YOUR_TOKEN`.
+    Make sure your API key is valid and included in the X-API-Key header as `X-API-Key: YOUR_API_KEY`.
   </Accordion>
   
   <Accordion title="No memories returned">
@@ -354,3 +353,4 @@ This example shows the basic pattern: search for context, generate response, sto
 </AccordionGroup>
 
 Ready to dive deeper? Check out our [Core Concepts](/essentials/memory-types) or explore the [full API reference](/api-reference/introduction).
+

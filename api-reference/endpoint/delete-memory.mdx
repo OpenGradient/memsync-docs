@@ -14,7 +14,7 @@ This operation is irreversible. Once a memory is deleted, it cannot be recovered
 
 ```bash cURL
 curl -X DELETE 'https://api.memsync.ai/memories/mem_123abc' \
-  -H 'Authorization: Bearer YOUR_JWT_TOKEN'
+  -H 'X-API-Key: YOUR_API_KEY'
 ```
 
 ```python Python
@@ -22,7 +22,7 @@ import requests
 
 url = "https://api.memsync.ai/memories/mem_123abc"
 headers = {
-    "Authorization": "Bearer YOUR_JWT_TOKEN"
+    "X-API-Key": "YOUR_API_KEY"
 }
 
 response = requests.delete(url, headers=headers)
@@ -33,7 +33,7 @@ result = response.json()
 const response = await fetch('https://api.memsync.ai/memories/mem_123abc', {
   method: 'DELETE',
   headers: {
-    'Authorization': 'Bearer YOUR_JWT_TOKEN',
+    'X-API-Key': 'YOUR_API_KEY',
   },
 });
 
