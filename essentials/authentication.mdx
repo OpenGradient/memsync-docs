@@ -5,40 +5,34 @@ description: 'Understanding MemSync authentication methods and security'
 
 # Authentication
 
-MemSync uses secure authentication methods to protect user data and ensure only authorized access to memories and profiles. The platform supports JWT token-based authentication with API keys coming soon.
+MemSync uses simple API key authentication to protect user data and ensure only authorized access to memories and profiles.
 
-## JWT Token Authentication
+## API Key Authentication
 
 ### How it Works
 
-MemSync uses JSON Web Tokens (JWT) for user authentication, validated against Supabase:
+MemSync uses API keys for authentication:
 
 <Steps>
-  <Step title="User Login">
-    User authenticates through your application's login system
+  <Step title="API Key Generation">
+    Generate an API key from your MemSync dashboard
   </Step>
-  
-  <Step title="Token Generation">
-    Your system generates a JWT token for the authenticated user
-  </Step>
-  
   <Step title="API Requests">
-    Include the JWT token in the Authorization header for all API requests
+    Include the API key in the X-API-Key header for all API requests
   </Step>
-  
-  <Step title="Token Validation">
-    MemSync validates the token against Supabase authentication
+  <Step title="Key Validation">
+    MemSync validates the API key and permissions
   </Step>
 </Steps>
 
-### Using JWT Tokens
+### Using API Keys
 
 ```python
 import requests
 
-# Include JWT token in all API requests
+# Include API key in all API requests
 headers = {
-    "Authorization": "Bearer YOUR_JWT_TOKEN",
+    "X-API-Key": "YOUR_API_KEY",
     "Content-Type": "application/json"
 }
 
@@ -49,86 +43,63 @@ response = requests.post("https://api.memsync.ai/v1/memories/search",
 )
 ```
 
-### Token Requirements
+### Key Requirements
 
-- **Format**: Bearer token in Authorization header
-- **Validation**: Must be valid against Supabase authentication
-- **Expiration**: Tokens have configurable expiration times
-- **Scope**: Tokens are user-specific and provide access to that user's data only
-
-## API Keys (Coming Soon)
-
-API keys will provide an alternative authentication method for third-party integrations:
-
-### Benefits of API Keys
-
-<CardGroup cols={2}>
-  <Card title="Simplified Integration" icon="plug">
-    Easier integration for third-party applications and services
-  </Card>
-  
-  <Card title="Enhanced Security" icon="shield">
-    App-specific keys with granular permissions and rate limiting
-  </Card>
-  
-  <Card title="Usage Tracking" icon="chart-bar">
-    Monitor API usage and performance per application
-  </Card>
-  
-  <Card title="Easy Management" icon="settings">
-    Create, rotate, and revoke keys through the dashboard
-  </Card>
-</CardGroup>
+- **Header**: X-API-Key
+- **Validation**: Must be a valid, active API key
+- **Format**: Simple string key
 
 ### API Key Features
 
-```python
-# Coming soon: API key authentication
-headers = {
-    "X-API-Key": "YOUR_API_KEY",
-    "Content-Type": "application/json"
-}
-
-# API keys will support user_id parameter for third-party apps
-response = requests.post("https://api.memsync.ai/v1/memories/search",
-    headers=headers,
-    json={
-        "query": "user interests", 
-        "user_id": "wallet123",  # Required for API key requests
-        "limit": 5
-    }
-)
-```
+<CardGroup cols={2}>
+  <Card title="Simple Integration" icon="plug">
+    Easy integration for third-party applications and services
+  </Card>
+  <Card title="Enhanced Security" icon="shield">
+    App-specific keys with granular permissions and rate limiting
+  </Card>
+  <Card title="Usage Tracking" icon="chart-bar">
+    Monitor API usage and performance
+  </Card>
+  <Card title="Easy Management" icon="settings">
+    Create and manage keys through the dashboard
+  </Card>
+</CardGroup>
 
 ## Security Best Practices
 
-### Token Security
+### API Key Security
 
 <AccordionGroup>
   <Accordion title="Secure Storage">
-    Store tokens securely and never expose them in client-side code
+    Store API keys securely and never expose them in client-side code
     
     ```python
     # ✅ Good: Store in environment variables
     import os
-    JWT_TOKEN = os.environ.get("MEMSYNC_JWT_TOKEN")
+    API_KEY = os.environ.get("MEMSYNC_API_KEY")
     
     # ❌ Bad: Hardcode in source code
-    JWT_TOKEN = "your_token_here"  # Never do this!
+    API_KEY = "your_api_key_here"  # Never do this!
     ```
   </Accordion>
 
-  <Accordion title="Token Rotation">
-    Implement token rotation for enhanced security
+  <Accordion title="Key Management">
+    Keep your API keys secure and rotate them when needed
     
     ```python
-    def refresh_token_if_needed(current_token):
-        # Check token expiration
-        if token_expires_soon(current_token):
-            # Refresh token through your auth system
-            new_token = refresh_jwt_token(current_token)
-            return new_token
-        return current_token
+    def make_authenticated_request(endpoint, data):
+        headers = {"X-API-Key": API_KEY}
+        
+        try:
+            response = requests.post(endpoint, headers=headers, json=data)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 401:
+                # Handle invalid API key
+                raise AuthenticationError("Invalid API key")
+            raise
     ```
   </Accordion>
 
@@ -137,7 +108,7 @@ response = requests.post("https://api.memsync.ai/v1/memories/search",
     
     ```python
     def make_authenticated_request(endpoint, data):
-        headers = {"Authorization": f"Bearer {JWT_TOKEN}"}
+        headers = {"X-API-Key": API_KEY}
         
         try:
             response = requests.post(endpoint, headers=headers, json=data)
@@ -145,8 +116,8 @@ response = requests.post("https://api.memsync.ai/v1/memories/search",
             return response.json()
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 401:
-                # Handle token expiration or invalid token
-                raise AuthenticationError("Invalid or expired token")
+                # Handle invalid API key
+                raise AuthenticationError("Invalid API key")
             raise
     ```
   </Accordion>
@@ -157,29 +128,25 @@ response = requests.post("https://api.memsync.ai/v1/memories/search",
 - **HTTPS Only**: All API communications use HTTPS encryption
 - **Rate Limiting**: Built-in rate limiting prevents abuse
 - **Request Validation**: All requests are validated for proper format and permissions
-- **Audit Logging**: All API access is logged for security monitoring
 
-## User Context Extraction
+## User Context
 
-MemSync automatically extracts user context from valid JWT tokens:
+MemSync automatically associates API requests with your account:
 
 ```python
-# The JWT token contains user information
-# MemSync automatically extracts:
-# - User ID
-# - User permissions
-# - Token expiration
-# - Authentication provider details
+# The API key is associated with your account
+# MemSync automatically handles:
+# - User identification
+# - Data isolation
+# - Access permissions
 
-# You don't need to pass user_id for JWT requests
 response = requests.post("https://api.memsync.ai/v1/memories",
-    headers={"Authorization": "Bearer YOUR_JWT_TOKEN"},
+    headers={"X-API-Key": "YOUR_API_KEY"},
     json={
         "messages": [...],
         "agent_id": "my-chatbot",
         "thread_id": "conversation-123",
         "source": "chat"
-        # user_id is automatically extracted from JWT
     }
 )
 ```
@@ -191,8 +158,7 @@ response = requests.post("https://api.memsync.ai/v1/memories",
 ```json
 {
   "detail": "Invalid authentication credentials",
-  "status_code": 401,
-  "error_code": "INVALID_TOKEN"
+  "status_code": 401
 }
 ```
 
@@ -201,10 +167,9 @@ response = requests.post("https://api.memsync.ai/v1/memories",
 <AccordionGroup>
   <Accordion title="401 Unauthorized">
     **Causes:**
-    - Missing Authorization header
-    - Invalid JWT token format
-    - Expired token
-    - Token not validated against Supabase
+    - Missing X-API-Key header
+    - Invalid API key
+    - API key not found in system
     
     **Response:**
     ```json
@@ -217,8 +182,7 @@ response = requests.post("https://api.memsync.ai/v1/memories",
 
   <Accordion title="403 Forbidden">
     **Causes:**
-    - Valid token but insufficient permissions
-    - Attempting to access another user's data
+    - Valid API key but insufficient permissions
     - Rate limit exceeded
     
     **Response:**
@@ -252,11 +216,11 @@ response = requests.post("https://api.memsync.ai/v1/memories",
 
 ```python
 class MemSyncClient:
-    def __init__(self, jwt_token):
-        self.jwt_token = jwt_token
+    def __init__(self, api_key):
+        self.api_key = api_key
         self.base_url = "https://api.memsync.ai/v1"
         self.headers = {
-            "Authorization": f"Bearer {jwt_token}",
+            "X-API-Key": api_key,
             "Content-Type": "application/json"
         }
     
@@ -270,7 +234,7 @@ class MemSyncClient:
         return response.json()
 
 # Usage
-client = MemSyncClient(jwt_token="your_jwt_token")
+client = MemSyncClient(api_key="your_api_key")
 memories = client.search_memories("user interests")
 ```
 
@@ -278,11 +242,11 @@ memories = client.search_memories("user interests")
 
 ```javascript
 class MemSyncClient {
-  constructor(jwtToken) {
-    this.jwtToken = jwtToken;
+  constructor(apiKey) {
+    this.apiKey = apiKey;
     this.baseUrl = 'https://api.memsync.ai/v1';
     this.headers = {
-      'Authorization': `Bearer ${jwtToken}`,
+      'X-API-Key': apiKey,
       'Content-Type': 'application/json'
     };
   }
@@ -303,18 +267,18 @@ class MemSyncClient {
 }
 
 // Usage
-const client = new MemSyncClient('your_jwt_token');
+const client = new MemSyncClient('your_api_key');
 const memories = await client.searchMemories('user interests');
 ```
 
 ## Testing Authentication
 
-### Validate Your Token
+### Validate Your API Key
 
 ```python
-def test_authentication(jwt_token):
-    """Test if your JWT token is valid"""
-    headers = {"Authorization": f"Bearer {jwt_token}"}
+def test_authentication(api_key):
+    """Test if your API key is valid"""
+    headers = {"X-API-Key": api_key}
     
     response = requests.get("https://api.memsync.ai/healthcheck", headers=headers)
     
@@ -326,36 +290,40 @@ def test_authentication(jwt_token):
         print(response.json())
         return False
 
-# Test your token
-test_authentication("your_jwt_token_here")
+# Test your API key
+test_authentication("your_api_key_here")
 ```
 
 ### Debug Authentication Issues
 
 ```python
-def debug_auth_issues(jwt_token):
+def debug_auth_issues(api_key):
     """Debug common authentication problems"""
     
-    # Check token format
-    if not jwt_token.startswith('Bearer '):
-        jwt_token = f"Bearer {jwt_token}"
+    # Check if API key is provided
+    if not api_key:
+        print("❌ API key is missing")
+        return
     
-    # Check token structure
+    # Check API key format (should be a simple string)
+    if len(api_key) < 10:
+        print("❌ API key seems too short")
+    else:
+        print("✅ API key format looks reasonable")
+    
+    # Test the API key
     try:
-        import jwt
-        payload = jwt.decode(jwt_token.replace('Bearer ', ''), 
-                           options={"verify_signature": False})
-        print(f"Token payload: {payload}")
+        headers = {"X-API-Key": api_key}
+        response = requests.get("https://api.memsync.ai/healthcheck", headers=headers)
         
-        # Check expiration
-        import time
-        if 'exp' in payload and payload['exp'] < time.time():
-            print("❌ Token is expired")
+        if response.status_code == 200:
+            print("✅ API key is valid")
         else:
-            print("✅ Token is not expired")
+            print(f"❌ API key validation failed: {response.status_code}")
+            print(response.json())
             
     except Exception as e:
-        print(f"❌ Token parsing error: {e}")
+        print(f"❌ Error testing API key: {e}")
 ```
 
 ## Next Steps

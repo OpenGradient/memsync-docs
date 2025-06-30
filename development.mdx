@@ -58,7 +58,7 @@ REDIS_DB=0
 
 # API Keys
 OPENAI_API_KEY=your_openai_key
-JWT_SECRET=your_jwt_secret
+API_KEY=your_api_key
 
 # Supabase (for authentication)
 SUPABASE_URL=your_supabase_url
@@ -250,13 +250,13 @@ curl http://localhost:8000/healthcheck
 
 # Store memories (requires auth)
 curl -X POST "http://localhost:8000/v1/memories" \
-  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "X-API-Key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"messages": [{"role": "user", "content": "Test message"}], "agent_id": "test", "thread_id": "test", "source": "test"}'
 
 # Search memories
 curl -X POST "http://localhost:8000/v1/memories/search" \
-  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "X-API-Key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"query": "test query", "limit": 5}'
 ```
