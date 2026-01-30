@@ -29,6 +29,25 @@ The documentation will be available at `http://localhost:3000`.
 - If the dev environment isn't running - Run `npm install` to re-install dependencies.
 
 ## Contributing
+### Troubleshooting
+
+#### Windows Installation
+If you are on Windows and encounter errors installing dependencies, we recommend using **WSL (Windows Subsystem for Linux)**. 
+1. Run `wsl --install` in PowerShell.
+2. Restart and install the requirements within the WSL terminal.
+
+#### Dependency Conflicts
+If `npm install` fails, try clearing your cache:
+```bash
+npm cache clean --force
+rm -rf node_modules
+npm install
+#### Authentication Loops (401 Unauthorized)
+If you are repeatedly asked to log in or see 401 errors:
+1. Clear browser cookies for `memsync.ai`.
+2. Ensure the extension has permissions for your specific AI site (ChatGPT, Claude, etc.).
+3. Log out and back in via the MemSync dashboard to refresh your session.
+
 
 When contributing to the documentation:
 
