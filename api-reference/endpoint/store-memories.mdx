@@ -189,33 +189,37 @@ console.log(result);
 
 ```json Success Response
 {
-  "success": true,
-  "memories_created": 3,
-  "processing_time": "1.8s",
-  "categories_detected": ["career", "identity"],
-  "memories": [
-    {
-      "id": "mem_789abc",
-      "memory": "Recently promoted to Senior Software Engineer at Google",
-      "categories": ["career"],
-      "type": "episodic",
-      "created_at": "2024-03-20T10:00:15Z"
-    },
-    {
-      "id": "mem_456def", 
-      "memory": "Works on ML infrastructure team at Google",
-      "categories": ["career"],
-      "type": "semantic",
-      "created_at": "2024-03-20T10:00:15Z"
-    },
-    {
-      "id": "mem_123ghi",
-      "memory": "Leads a team of 5 engineers working on recommendation systems",
-      "categories": ["career"],
-      "type": "episodic", 
-      "created_at": "2024-03-20T10:00:15Z"
-    }
-  ]
+  "data": {
+    "success": true,
+    "memories_created": 3,
+    "processing_time": "1.8s",
+    "categories_detected": ["career", "identity"],
+    "memories": [
+      {
+        "id": "mem_789abc",
+        "memory": "Recently promoted to Senior Software Engineer at Google",
+        "categories": ["career"],
+        "type": "episodic",
+        "created_at": "2024-03-20T10:00:15Z"
+      },
+      {
+        "id": "mem_456def", 
+        "memory": "Works on ML infrastructure team at Google",
+        "categories": ["career"],
+        "type": "semantic",
+        "created_at": "2024-03-20T10:00:15Z"
+      },
+      {
+        "id": "mem_123ghi",
+        "memory": "Leads a team of 5 engineers working on recommendation systems",
+        "categories": ["career"],
+        "type": "episodic", 
+        "created_at": "2024-03-20T10:00:15Z"
+      }
+    ]
+  },
+  "status": "success",
+  "timestamp": "2024-03-20T10:00:15Z"
 }
 ```
 

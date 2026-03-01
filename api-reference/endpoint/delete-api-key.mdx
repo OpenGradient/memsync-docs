@@ -13,7 +13,7 @@ This action is irreversible. Once an API key is deleted, it cannot be recovered.
 <RequestExample>
 
 ```bash cURL
-curl -X DELETE 'https://api.memchat.io/api-keys/key_123abc' \
+curl -X DELETE 'https://api.memchat.io/v1/api-keys/key_123abc' \
   -H 'Authorization: Bearer YOUR_JWT_TOKEN'
 ```
 
@@ -21,7 +21,7 @@ curl -X DELETE 'https://api.memchat.io/api-keys/key_123abc' \
 import requests
 
 response = requests.delete(
-    "https://api.memchat.io/api-keys/key_123abc",
+    "https://api.memchat.io/v1/api-keys/key_123abc",
     headers={"Authorization": "Bearer YOUR_JWT_TOKEN"}
 )
 result = response.json()

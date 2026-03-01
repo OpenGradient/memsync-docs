@@ -9,7 +9,7 @@ Allows users to customize their auto-generated bio or provide manual overrides f
 <RequestExample>
 
 ```bash cURL
-curl -X PATCH 'https://api.memchat.io/profile/bio' \
+curl -X PATCH 'https://api.memchat.io/v1/profile/bio' \
   -H 'X-API-Key: YOUR_API_KEY' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -22,7 +22,7 @@ curl -X PATCH 'https://api.memchat.io/profile/bio' \
 ```python Python
 import requests
 
-url = "https://api.memchat.io/profile/bio"
+url = "https://api.memchat.io/v1/profile/bio"
 headers = {
     "X-API-Key": "YOUR_API_KEY",
     "Content-Type": "application/json"
@@ -39,7 +39,7 @@ bio = response.json()
 ```
 
 ```javascript JavaScript
-const response = await fetch('https://api.memchat.io/profile/bio', {
+const response = await fetch('https://api.memchat.io/v1/profile/bio', {
   method: 'PATCH',
   headers: {
     'X-API-Key': 'YOUR_API_KEY',

@@ -9,14 +9,14 @@ Retrieves the user's comprehensive profile, which includes an auto-generated bio
 <RequestExample>
 
 ```bash cURL
-curl -X GET 'https://api.memchat.io/profile' \
+curl -X GET 'https://api.memchat.io/v1/profile' \
   -H 'X-API-Key: YOUR_API_KEY'
 ```
 
 ```python Python
 import requests
 
-url = "https://api.memchat.io/profile"
+url = "https://api.memchat.io/v1/profile"
 headers = {
     "X-API-Key": "YOUR_API_KEY"
 }
@@ -26,7 +26,7 @@ profile = response.json()
 ```
 
 ```javascript JavaScript
-const response = await fetch('https://api.memchat.io/profile', {
+const response = await fetch('https://api.memchat.io/v1/profile', {
   method: 'GET',
   headers: {
     'X-API-Key': 'YOUR_API_KEY',

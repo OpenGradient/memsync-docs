@@ -50,7 +50,7 @@
             "pages": [
               "api-reference/endpoint/store-memories",
               "api-reference/endpoint/search-memories",
-              "api-reference/endpoint/get-memories",
+              "api-reference/endpoint/get",
               "api-reference/endpoint/update-memory",
               "api-reference/endpoint/delete-memory"
             ]

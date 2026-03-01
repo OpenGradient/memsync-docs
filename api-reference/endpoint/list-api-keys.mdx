@@ -9,7 +9,7 @@ Retrieves a list of all API keys associated with the authenticated user account.
 <RequestExample>
 
 ```bash cURL
-curl -X GET 'https://api.memchat.io/api-keys' \
+curl -X GET 'https://api.memchat.io/v1/api-keys' \
   -H 'Authorization: Bearer YOUR_JWT_TOKEN'
 ```
 
@@ -17,7 +17,7 @@ curl -X GET 'https://api.memchat.io/api-keys' \
 import requests
 
 response = requests.get(
-    "https://api.memchat.io/api-keys",
+    "https://api.memchat.io/v1/api-keys",
     headers={"Authorization": "Bearer YOUR_JWT_TOKEN"}
 )
 api_keys = response.json()

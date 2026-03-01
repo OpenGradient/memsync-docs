@@ -282,7 +282,7 @@ def test_authentication(api_key):
     """Test if your API key is valid"""
     headers = {"X-API-Key": api_key}
     
-    response = requests.get("https://api.memchat.io/healthcheck", headers=headers)
+    response = requests.get("https://api.memchat.io/v1/healthcheck", headers=headers)
     
     if response.status_code == 200:
         print("✅ Authentication successful")

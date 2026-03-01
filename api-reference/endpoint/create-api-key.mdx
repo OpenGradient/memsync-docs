@@ -9,7 +9,7 @@ Creates a new API key for accessing MemSync APIs programmatically.
 <RequestExample>
 
 ```bash cURL
-curl -X POST 'https://api.memchat.io/api-keys' \
+curl -X POST 'https://api.memchat.io/v1/api-keys' \
   -H 'Authorization: Bearer YOUR_JWT_TOKEN' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -29,7 +29,7 @@ data = {
 }
 
 response = requests.post(
-    "https://api.memchat.io/api-keys",
+    "https://api.memchat.io/v1/api-keys",
     headers={"Authorization": "Bearer YOUR_JWT_TOKEN"},
     json=data
 )

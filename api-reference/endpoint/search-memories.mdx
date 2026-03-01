@@ -177,48 +177,52 @@ result.memories.forEach(memory => {
 
 ```json Success Response
 {
-  "user_bio": "Senior Software Engineer at Google specializing in machine learning infrastructure with 8+ years of experience. Passionate about hiking, photography, and sustainable living.",
-  "memories": [
-    {
-      "id": "mem_abc123",
-      "memory": "Works as a Senior Software Engineer at Google on ML infrastructure team",
-      "categories": ["career"],
-      "type": "semantic",
-      "vector_distance": 0.15,
-      "rerank_score": 0.95,
-      "source": "chat",
-      "created_at": "2024-03-20T10:00:00Z",
-      "updated_at": "2024-03-20T10:00:00Z",
-      "agent_id": "career-advisor-bot",
-      "thread_id": "conversation-2024-001"
-    },
-    {
-      "id": "mem_def456",
-      "memory": "Recently promoted to Senior Software Engineer, leads team of 5 engineers",
-      "categories": ["career"],
-      "type": "episodic",
-      "vector_distance": 0.22,
-      "rerank_score": 0.88,
-      "source": "chat",
-      "created_at": "2024-03-20T09:30:00Z", 
-      "updated_at": "2024-03-20T09:30:00Z",
-      "agent_id": "career-advisor-bot",
-      "thread_id": "conversation-2024-001"
-    },
-    {
-      "id": "mem_ghi789",
-      "memory": "Has 8+ years of experience in software engineering",
-      "categories": ["career"],
-      "type": "semantic",
-      "vector_distance": 0.28,
-      "rerank_score": 0.82,
-      "source": "integration",
-      "created_at": "2024-03-19T15:20:00Z",
-      "updated_at": "2024-03-19T15:20:00Z",
-      "agent_id": "linkedin-integration",
-      "thread_id": "integration-linkedin-001"
-    }
-  ]
+  "data": {
+    "user_bio": "Senior Software Engineer at Google specializing in machine learning infrastructure with 8+ years of experience. Passionate about hiking, photography, and sustainable living.",
+    "memories": [
+      {
+        "id": "mem_abc123",
+        "memory": "Works as a Senior Software Engineer at Google on ML infrastructure team",
+        "categories": ["career"],
+        "type": "semantic",
+        "vector_distance": 0.15,
+        "rerank_score": 0.95,
+        "source": "chat",
+        "created_at": "2024-03-20T10:00:00Z",
+        "updated_at": "2024-03-20T10:00:00Z",
+        "agent_id": "career-advisor-bot",
+        "thread_id": "conversation-2024-001"
+      },
+      {
+        "id": "mem_def456",
+        "memory": "Recently promoted to Senior Software Engineer, leads team of 5 engineers",
+        "categories": ["career"],
+        "type": "episodic",
+        "vector_distance": 0.22,
+        "rerank_score": 0.88,
+        "source": "chat",
+        "created_at": "2024-03-20T09:30:00Z", 
+        "updated_at": "2024-03-20T09:30:00Z",
+        "agent_id": "career-advisor-bot",
+        "thread_id": "conversation-2024-001"
+      },
+      {
+        "id": "mem_ghi789",
+        "memory": "Has 8+ years of experience in software engineering",
+        "categories": ["career"],
+        "type": "semantic",
+        "vector_distance": 0.28,
+        "rerank_score": 0.82,
+        "source": "integration",
+        "created_at": "2024-03-19T15:20:00Z",
+        "updated_at": "2024-03-19T15:20:00Z",
+        "agent_id": "linkedin-integration",
+        "thread_id": "integration-linkedin-001"
+      }
+    ]
+  },
+  "status": "success",
+  "timestamp": "2024-03-20T10:00:00Z"
 }
 ```
 
